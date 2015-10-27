@@ -1,19 +1,29 @@
-#unveil.js
-###A very lightweight plugin to lazy load images for jQuery or Zepto.js
+# unveil2.js
 
+__A very lightweight plugin to lazy load images for jQuery or Zepto.js__
 
+--------------
 
-Most of us are familiar with the [Lazy Load](http://www.appelsiini.net/projects/lazyload) plugin by [Mika Tuupola](http://www.appelsiini.net/).
-This plugin is very useful and it boosts performance delaying loading of images in long web pages because images outside of viewport (visible part of web page) won't be loaded until the user scrolls to them.
-Lazy Load has some cool options such as custom effects, container, events or data attribute. If you're not gonna use any of them you can reduce the file size by leaving just the essential code to show the images.
-That's what I did and this is my lightweight version of Lazy Load with support for serving high-resolution images to devices with retina displays - less than 1k.
+Based on the [excellent work](https://github.com/luis-almeida/unveil) by Luis Almeida.
 
-Visit unveil's [project page](http://luis-almeida.github.com/unveil/) to read the documentation and see the demo.
+## API
 
+For now, see https://github.com/luis-almeida/unveil.
 
-###Browser support
-Compatible with All Browsers and IE7+.
+**Extra**
 
+```js
+// Added third parameter to specify extra large images after breakpoints
+$("img").unveil(offset, success, [{
+    minWidth: 400,
+    attribute: 'data-src-large'
+}]
+```
 
-###License
-Unveil is licensed under the [MIT license](http://opensource.org/licenses/MIT).
+```html
+<!-- Specify default image in src attribute, placeholder in data-src-attribute, retina source as '|' separated value -->
+<img src="normal.jpg" data-src-placeholder="placeholder.jpg" data-src-large="larger.jpg|retina.jpg" />
+```
+
+## License
+Unveil2 is licensed under the [MIT license](http://opensource.org/licenses/MIT).
