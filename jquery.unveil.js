@@ -1,11 +1,11 @@
 /**
- * jQuery Unveil
+ * jQuery Unveil2
  * A very lightweight jQuery plugin to lazy load images
- * http://luis-almeida.github.com/unveil
+ * Based on https://github.com/luis-almeida/unveil
  *
  * Licensed under the MIT license.
- * Copyright 2013 Luís Almeida
- * https://github.com/luis-almeida
+ * Copyright 2015 Joram van den Boezem
+ * https://github.com/hongaar/unveil
  */
 
 ;
@@ -17,7 +17,7 @@
         var $window = $(window),
             pixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
             th = threshold || 0,
-            sizes = sizes || [{}],
+            sizes = sizes || [],
             retina = window.devicePixelRatio > 1,
             images = this,
             loaded;
@@ -39,10 +39,15 @@
             var $this = $(this), windowWidth = $window.width(),
                 attrib = 'src', src, retinaSrc;
 
+            //console.log('unveil', $this);
+
             // Determine attribute to extract source from
-            for (var i in sizes) {
+            for (var i = 0; i < sizes.length; i++) {
                 var dataAttrib = sizes[i].attribute.replace(/^data-/, '');
                 if (windowWidth >= sizes[i].minWidth && $this.data(dataAttrib)) {
+
+                    //console.log('using', dataAttrib);
+
                     attrib = dataAttrib;
                     break;
                 }
@@ -59,6 +64,10 @@
 
             // Change attribute on image
             if (src) {
+
+                //console.log('retina?', retina);
+                //console.log('src?', (retina && retinaSrc) ? retinaSrc : src);
+
                 $this.prop("src", (retina && retinaSrc) ? retinaSrc : src);
                 $this.on('load', unveil);
 
@@ -82,7 +91,8 @@
                 return eb >= wt - th && et <= wb + th;
             });
 
-            console.log('now in view', inview.length, 'images');
+            //console.log('now in view', inview.length, 'images');
+
             loaded = inview.trigger("unveil");
             images = images.not(loaded);
         }
