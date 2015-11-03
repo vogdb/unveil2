@@ -10,6 +10,9 @@
 
 (function ($) {
 
+    var images = [],
+        initialized = false;
+
     $.fn.unveil = function (_treshold, _callback, _sizes) {
 
         console.log('Initializing unveil2 with the following options:', {
@@ -24,8 +27,12 @@
             treshold = _treshold || 0,
             sizes = _sizes || [],
             retina = window.devicePixelRatio > 1,
-            images = this,
             loaded;
+
+        // Sort sizes array, arrange highest minWidth to front of array
+        sizes.sort(function(a, b) {
+            return a.minWidth < b.minWidth;
+        });
 
         // Read and reset the src attribute first, to prevent loading
         // of original images
@@ -33,19 +40,30 @@
             var $this = $(this),
                 placeholder = $this.data('src-placeholder') || pixel;
 
-            // Set data-src if not set
-            if (!$this.data('src')) {
-                $this.data('src', $this.prop('src'));
-            }
+            // Add element to global array
+            images = $(images).add(this);
 
-            // Cancel download of current image & set placeholder after
-            // a very short timeout
-            $this.prop('src', '');
-            setTimeout(function() {
-                $this.addClass('unveil-placeholder');
-                $this.prop('src', placeholder);
-            }, 0);
+            // If this element has been called before,
+            // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
+            if (!$this.data('unveil')) {
+
+                // Set the unveil flag
+                $this.data('unveil', true);
+
+                // Set data-src if not set
+                if (!$this.data('src')) {
+                    $this.data('src', $this.prop('src'));
+                }
+
+                // Set placeholder
+                $this.one('load', function() {
+                    $(this).addClass('unveil-placeholder');
+                    unveil();
+                }).prop('src', '').prop('src', placeholder);
+            }
         });
+
+        console.log('Images now in collection', images.length);
 
         // This triggers an image source to be set on the target,
         // based on window width and presence of retina screen
@@ -75,11 +93,17 @@
             if (defaultSrc) {
                 targetSrc = (retina && retinaSrc) ? retinaSrc : defaultSrc;
 
-                console.log('Unveiling with source image', targetSrc);
+                console.log('Unveiling image', {
+                    attribute: attrib,
+                    retina: retina,
+                    defaultSrc: defaultSrc,
+                    retinaSrc: retinaSrc,
+                    targetSrc: targetSrc
+                });
 
                 $this.addClass('unveil-loading');
                 $this.prop("src", targetSrc);
-                $this.on('load', function() {
+                $this.one('load', function() {
                     $this.removeClass('unveil-placeholder unveil-loading');
                     $this.addClass('unveil-loaded');
                     unveil();
@@ -92,9 +116,12 @@
             }
         });
 
-        function unveil() {
+        var unveil = function() {
+            console.log('Unveiling');
+
             var inview = images.filter(function () {
                 var $e = $(this);
+
                 if ($e.is(":hidden")) return;
 
                 var viewportStart = $window.scrollTop(),
@@ -105,19 +132,23 @@
                 return elementEnd >= viewportStart - treshold && elementTop <= viewportEnd + treshold;
             });
 
+            inview.trigger("unveil");
+            images = images.not(inview);
+
             if (inview.length) {
-                console.log('New images in view:', inview.length);
+                console.log('New images in view', inview.length, ', leaves' , images.length, 'in collection');
             }
+        };
 
-            loaded = inview.trigger("unveil");
-            images = images.not(loaded);
+        if (!initialized) {
+            $window.on("scroll.unveil resize.unveil lookup.unveil", unveil);
         }
-
-        $window.on("scroll.unveil resize.unveil lookup.unveil", unveil);
 
         // Wait a little bit for the placeholder to be set, so the src attribute
         // is not empty (which will mark the image as hidden)
         setTimeout(unveil, 0);
+
+        initialized = true;
 
         return this;
 
