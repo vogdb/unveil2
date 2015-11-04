@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/nabble/unveil2.svg?branch=develop)](https://travis-ci.org/nabble/unveil2)
+[![npm](https://img.shields.io/npm/v/unveil2.svg)]()
+[![Travis](https://img.shields.io/travis/nabble/unveil2.svg)]()
 
 # unveil2.js
 
