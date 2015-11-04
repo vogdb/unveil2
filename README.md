@@ -1,28 +1,40 @@
+[![npm](https://img.shields.io/npm/v/unveil2.svg)]()
+[![Travis](https://img.shields.io/travis/nabble/unveil2.svg)]()
+
 # unveil2.js
 
 __A very lightweight plugin to lazy load images for jQuery or Zepto.js__
 
 --------------
 
-Based on the [excellent work](https://github.com/luis-almeida/unveil) by Luis Almeida.
+Based on [luis-almeida/unveil](https://github.com/luis-almeida/unveil).
 
 ## API
 
-For now, see https://github.com/luis-almeida/unveil.
-
-**Extra**
-
 ```js
-// Added third parameter to specify extra large images after breakpoints
-$("img").unveil(offset, success, [{
-    minWidth: 768,
-    attribute: 'data-src-large'
-}]
+$("img").unveil({
+    treshold: 100,
+    success: function () {
+        console.log('Unveiled', this);
+    },
+    placeholder: 'http://placehold.it/350x150',
+    breakpoints: [
+        {
+            minWidth: 768,
+            attribute: 'data-src-md'
+        },
+        {
+            minWidth: 1200,
+            attribute: 'data-src-lg'
+        }
+    ]
+});
 ```
 
 ```html
-<!-- Specify default image in src attribute, placeholder in data-src-placeholder, retina source as '|' separated value -->
-<img src="normal.jpg" data-src-placeholder="placeholder.jpg" data-src-large="larger.jpg|larger@x2.jpg" />
+<img src="normal.jpg"
+    data-src-placeholder="placeholder.jpg"
+    data-src-md="larger.jpg|larger@x2.jpg" />
 ```
 
 ## License
