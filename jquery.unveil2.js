@@ -10,27 +10,25 @@
 
 (function ($) {
 
-    var images = [],
+    var images = $(),
         initialized = false;
 
-    $.fn.unveil = function (_treshold, _callback, _sizes) {
+    $.fn.unveil = function (opts) {
 
-        console.log('Initializing unveil2 with the following options:', {
-            treshold: _treshold,
-            callback: _callback,
-            _sizes: _sizes
-        });
+        opts = opts || {};
+
+        console.log('Initializing unveil2 with the following options:', opts);
 
         // Initialize variables
         var $window = $(window),
-            pixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-            treshold = _treshold || 0,
-            sizes = _sizes || [],
+            placeholder = opts.placeholder || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+            treshold = opts.treshold || 0,
+            breakpoints = opts.breakpoints || [],
             retina = window.devicePixelRatio > 1,
             loaded;
 
         // Sort sizes array, arrange highest minWidth to front of array
-        sizes.sort(function(a, b) {
+        breakpoints.sort(function(a, b) {
             return a.minWidth < b.minWidth;
         });
 
@@ -38,7 +36,7 @@
         // of original images
         this.each(function () {
             var $this = $(this),
-                placeholder = $this.data('src-placeholder') || pixel;
+                elmPlaceholder = $this.data('src-placeholder') || placeholder;
 
             // Add element to global array
             images = $(images).add(this);
@@ -59,7 +57,7 @@
                 $this.one('load', function() {
                     $(this).addClass('unveil-placeholder');
                     unveil();
-                }).prop('src', '').prop('src', placeholder);
+                }).prop('src', '').prop('src', elmPlaceholder);
             }
         });
 
@@ -72,9 +70,9 @@
                 attrib = 'src', targetSrc, defaultSrc, retinaSrc;
 
             // Determine attribute to extract source from
-            for (var i = 0; i < sizes.length; i++) {
-                var dataAttrib = sizes[i].attribute.replace(/^data-/, '');
-                if (windowWidth >= sizes[i].minWidth && $this.data(dataAttrib)) {
+            for (var i = 0; i < breakpoints.length; i++) {
+                var dataAttrib = breakpoints[i].attribute.replace(/^data-/, '');
+                if (windowWidth >= breakpoints[i].minWidth && $this.data(dataAttrib)) {
                     attrib = dataAttrib;
                     break;
                 }
@@ -84,7 +82,7 @@
             defaultSrc = retinaSrc = $this.data(attrib);
 
             // Do we have a retina source?
-            if (defaultSrc.indexOf("|") !== -1) {
+            if (defaultSrc && defaultSrc.indexOf("|") !== -1) {
                 retinaSrc = defaultSrc.split("|")[1];
                 defaultSrc = defaultSrc.split("|")[0];
             }
@@ -110,8 +108,8 @@
                 });
 
                 // Fire up the callback if it's a function
-                if (typeof _callback === "function") {
-                    _callback.call(this);
+                if (typeof opts.success === "function") {
+                    opts.success.call(this);
                 }
             }
         });

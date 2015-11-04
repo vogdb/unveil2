@@ -85,14 +85,24 @@ module.exports = function (grunt) {
 
 
     /**
-     * Default task.
+     * Test task.
+     *
+     * run `grunt test`
+     */
+    grunt.registerTask('test', [
+        'jshint',
+        'connect',
+        'qunit'
+    ]);
+
+
+    /**
+     * Build task.
      *
      * run `grunt build`
      */
     grunt.registerTask('build', [
-        'jshint',
-        'connect',
-        'qunit',
+        'test',
         'uglify'
     ]);
 
