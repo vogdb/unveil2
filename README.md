@@ -1,5 +1,5 @@
-[![npm](https://img.shields.io/npm/v/unveil2.svg)]()
-[![Travis](https://img.shields.io/travis/nabble/unveil2.svg)]()
+[![Travis](https://img.shields.io/travis/nabble/unveil2.svg)](https://travis-ci.org/nabble/unveil2)
+[![npm](https://img.shields.io/npm/v/unveil2.svg)](https://www.npmjs.com/package/unveil2)
 
 # unveil2.js
 
