@@ -1,8 +1,8 @@
 {
   "name": "unveil2",
   "title": "unveil2.js",
-  "version": "0.1.0",
-  "homepage": "https://github.com/hongaar/unveil2",
+  "version": "2.0.0",
+  "homepage": "https://github.com/nabble/unveil2",
   "description": "unveil2.js is a fork of luis-almeida/unveil",
   "license": "MIT",
   "author": {
@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hongaar/unveil2"
+    "url": "https://github.com/nabble/unveil2"
   },
   "bugs": {
-    "url": "https://github.com/hongaar/unveil2/issues"
+    "url": "https://github.com/nabble/unveil2/issues"
   },
   "keywords": [
     "lazy load"
