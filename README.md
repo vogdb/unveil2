@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nabble/unveil2.svg?branch=develop)](https://travis-ci.org/nabble/unveil2)
+
 # unveil2.js
 
 __A very lightweight plugin to lazy load images for jQuery or Zepto.js__
