@@ -8,11 +8,16 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
         <style>
             #counter {
-                background-color: silver;
-                padding: 5px 20px;
                 position: fixed;
                 top: 0;
                 left: 0;
+                z-index: 1;
+                background-color: steelblue;
+                color: white;
+                padding: 5px 20px;
+            }
+            #counter span {
+                font-weight:bold;
             }
 
             li img {
@@ -21,7 +26,7 @@
             }
 
             li img.unveil-placeholder {
-                outline: 10px solid lightgoldenrodyellow;
+                outline: 10px solid steelblue;
             }
 
             li img.unveil-loading {
@@ -29,15 +34,16 @@
             }
 
             li img.unveil-loaded {
-                outline: 10px solid seagreen;
+                min-height: inherit;
+                outline: 10px solid mediumseagreen;
             }
 
             @keyframes pulsar {
                 from {
-                    outline: 10px solid midnightblue;
+                    outline: 10px solid steelblue;
                 }
                 to {
-                    outline: 0 solid midnightblue;
+                    outline: 0 solid steelblue;
                 }
             }
         </style>
@@ -55,61 +61,51 @@
             <ul class="list-unstyled">
                 <li>
                     <img src="http://loremflickr.com/500/300?r=1"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=1|http://loremflickr.com/1000/600?r=1"
                          data-src-lg="http://loremflickr.com/1000/600?r=1|http://loremflickr.com/2000/1200?r=1"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=2"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=2|http://loremflickr.com/1000/600?r=2"
                          data-src-lg="http://loremflickr.com/1000/600?r=2|http://loremflickr.com/2000/1200?r=2"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=3"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=3|http://loremflickr.com/1000/600?r=3"
                          data-src-lg="http://loremflickr.com/1000/600?r=3|http://loremflickr.com/2000/1200?r=3"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=4"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=4|http://loremflickr.com/1000/600?r=4"
                          data-src-lg="http://loremflickr.com/1000/600?r=4|http://loremflickr.com/2000/1200?r=4"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=5"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=5|http://loremflickr.com/1000/600?r=5"
                          data-src-lg="http://loremflickr.com/1000/600?r=5|http://loremflickr.com/2000/1200?r=5"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=6"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=6|http://loremflickr.com/1000/600?r=6"
                          data-src-lg="http://loremflickr.com/1000/600?r=6|http://loremflickr.com/2000/1200?r=6"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=7"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=7|http://loremflickr.com/1000/600?r=7"
                          data-src-lg="http://loremflickr.com/1000/600?r=7|http://loremflickr.com/2000/1200?r=7"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=8"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=8|http://loremflickr.com/1000/600?r=8"
                          data-src-lg="http://loremflickr.com/1000/600?r=8|http://loremflickr.com/2000/1200?r=8"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=9"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=9|http://loremflickr.com/1000/600?r=9"
                          data-src-lg="http://loremflickr.com/1000/600?r=9|http://loremflickr.com/2000/1200?r=9"/>
                 </li>
                 <li>
                     <img src="http://loremflickr.com/500/300?r=10"
-                         data-src-placeholder="http://placehold.it/500x300"
                          data-src="http://loremflickr.com/500/300?r=10|http://loremflickr.com/1000/600?r=10"
                          data-src-lg="http://loremflickr.com/1000/600?r=10|http://loremflickr.com/2000/1200?r=10"/>
                 </li>
@@ -129,11 +125,12 @@
                 }, 100);
             });
             $("li img").unveil({
-                treshold: 100,
-                success: function () {
-                    console.log('Unveiled', this);
+                offset: 100,
+                loaded: function () {
+                    // Do some stuff here when image is loaded
                 },
-                placeholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                placeholder: 'http://placehold.it/500x300/C8D3DC?text=placeholder',
+                throttle: 200,
                 breakpoints: [
                     {
                         minWidth: 375,

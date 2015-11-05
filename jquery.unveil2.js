@@ -19,18 +19,19 @@
 
         opts = opts || {};
 
-        console.log('Called unveil2 on', this.length, 'elements with the following options:', opts);
+        console.log('Called unveil on', this.length, 'elements with the following options:', opts);
 
         // Initialize variables
         var $window = $(window),
+            $container = opts.container || $window,
             placeholder = opts.placeholder || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-            treshold = opts.treshold || 0,
+            offset = opts.offset || 0,
+            height = $window.height(),
             breakpoints = opts.breakpoints || [],
-            retina = window.devicePixelRatio > 1,
-            loaded;
+            retina = window.devicePixelRatio > 1;
 
         // Sort sizes array, arrange highest minWidth to front of array
-        breakpoints.sort(function(a, b) {
+        breakpoints.sort(function (a, b) {
             return b.minWidth - a.minWidth;
         });
 
@@ -57,7 +58,7 @@
 
                 // Set placeholder
                 $this
-                    .one('load', function() {
+                    .one('load', function () {
                         $(this).addClass(unveilString + '-placeholder');
                         unveil();
                     })
@@ -111,7 +112,7 @@
                 $this.prop("src", targetSrc);
 
                 // When new source has loaded, do stuff
-                $this.one('load', function() {
+                $this.one('load', function () {
 
                     // Change classes
                     classLoaded($this);
@@ -127,47 +128,72 @@
                 }
 
                 // Fire up the callback if it's a function
-                if (typeof opts.success === "function") {
-                    opts.success.call(this);
+                if (typeof opts.loaded === "function") {
+                    opts.loaded.call(this);
                 }
             }
         });
 
-        var unveil = function() {
+        var resize = function () {
+            height = $window.height();
+            unveil();
+        };
+
+        var inview = function () {
+            var $this = $(this);
+
+            if ($this.is(":hidden")) return;
+
+            var viewportTop = $window.scrollTop(),
+                viewportEnd = viewportTop + $window.height(),
+                containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
+                elementTop = $this.offset().top + containerTop,
+                elementEnd = elementTop + $this.height();
+
+            return elementEnd >= viewportTop - offset && elementTop <= viewportEnd + offset;
+        };
+
+        var unveil = function () {
             console.log('Unveiling');
 
-            var inview = images.filter(function () {
-                var $e = $(this);
+            var batch = images.filter(inview);
 
-                if ($e.is(":hidden")) return;
+            batch.trigger(unveilString);
+            images = images.not(batch);
 
-                var viewportStart = $window.scrollTop(),
-                    viewportEnd = viewportStart + $window.height(),
-                    elementTop = $e.offset().top,
-                    elementEnd = elementTop + $e.height();
-
-                return elementEnd >= viewportStart - treshold && elementTop <= viewportEnd + treshold;
-            });
-
-            inview.trigger(unveilString);
-            images = images.not(inview);
-
-            if (inview.length) {
-                console.log('New images in view', inview.length, ', leaves' , images.length, 'in collection');
+            if (batch.length) {
+                console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
             }
         };
 
-        var classLoading = function($elm) {
+        var classLoading = function ($elm) {
             $elm.addClass(unveilString + '-loading');
         };
 
-        var classLoaded = function($elm) {
+        var classLoaded = function ($elm) {
             $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
             $elm.addClass(unveilString + '-loaded');
         };
 
+        var throttle = function (callback) {
+            var wait = false;                  // Initially, we're not waiting
+            return function () {               // We return a throttled function
+                if (!wait) {                   // If we're not waiting
+                    wait = true;               // Prevent future invocations
+                    setTimeout(function () {   // After a period of time
+                        callback();            // Execute users function
+                        wait = false;          // And allow future invocations
+                    }, opts.throttle || 0);
+                }
+            };
+        };
+
         if (!initialized) {
-            $window.on('scroll.' + unveilString + ' resize.' + unveilString + ' lookup.' + unveilString, unveil);
+            $container.on({
+                'resize.unveil': throttle(resize),
+                'scroll.unveil': throttle(unveil),
+                'lookup.unveil': unveil
+            });
         }
 
         // Wait a little bit for the placeholder to be set, so the src attribute

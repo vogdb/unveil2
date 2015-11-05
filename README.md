@@ -13,11 +13,12 @@ Based on [luis-almeida/unveil](https://github.com/luis-almeida/unveil).
 
 ```js
 $("img").unveil({
-    treshold: 100,
-    success: function () {
+    offset: 100,
+    loaded: function () {
         console.log('Unveiled', this);
     },
     placeholder: 'http://placehold.it/350x150',
+    throttle: 200,
     breakpoints: [
         {
             minWidth: 768,
