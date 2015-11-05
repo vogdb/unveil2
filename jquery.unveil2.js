@@ -10,14 +10,16 @@
 
 (function ($) {
 
-    var images = $(),
+    // "unveil" as a variable to save some bytes
+    var unveilString = 'unveil',
+        images = $(),
         initialized = false;
 
     $.fn.unveil = function (opts) {
 
         opts = opts || {};
 
-        console.log('Initializing unveil2 with the following options:', opts);
+        console.log('Called unveil2 on', this.length, 'elements with the following options:', opts);
 
         // Initialize variables
         var $window = $(window),
@@ -29,7 +31,7 @@
 
         // Sort sizes array, arrange highest minWidth to front of array
         breakpoints.sort(function(a, b) {
-            return a.minWidth < b.minWidth;
+            return b.minWidth - a.minWidth;
         });
 
         // Read and reset the src attribute first, to prevent loading
@@ -43,10 +45,10 @@
 
             // If this element has been called before,
             // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
-            if (!$this.data('unveil')) {
+            if (!$this.data(unveilString)) {
 
                 // Set the unveil flag
-                $this.data('unveil', true);
+                $this.data(unveilString, true);
 
                 // Set data-src if not set
                 if (!$this.data('src')) {
@@ -54,10 +56,13 @@
                 }
 
                 // Set placeholder
-                $this.one('load', function() {
-                    $(this).addClass('unveil-placeholder');
-                    unveil();
-                }).prop('src', '').prop('src', elmPlaceholder);
+                $this
+                    .one('load', function() {
+                        $(this).addClass(unveilString + '-placeholder');
+                        unveil();
+                    })
+                    .prop('src', '')
+                    .prop('src', elmPlaceholder);
             }
         });
 
@@ -65,7 +70,7 @@
 
         // This triggers an image source to be set on the target,
         // based on window width and presence of retina screen
-        this.one("unveil", function () {
+        this.one(unveilString, function () {
             var $this = $(this), windowWidth = $window.width(),
                 attrib = 'src', targetSrc, defaultSrc, retinaSrc;
 
@@ -99,13 +104,27 @@
                     targetSrc: targetSrc
                 });
 
-                $this.addClass('unveil-loading');
+                // Change classes
+                classLoading($this);
+
+                // Set new source
                 $this.prop("src", targetSrc);
+
+                // When new source has loaded, do stuff
                 $this.one('load', function() {
-                    $this.removeClass('unveil-placeholder unveil-loading');
-                    $this.addClass('unveil-loaded');
+
+                    // Change classes
+                    classLoaded($this);
+
+                    // Loading the image may have modified page layout,
+                    // so unveil again
                     unveil();
                 });
+
+                // If the image has instantly loaded, change classes now
+                if (this.complete) {
+                    classLoaded($this);
+                }
 
                 // Fire up the callback if it's a function
                 if (typeof opts.success === "function") {
@@ -130,7 +149,7 @@
                 return elementEnd >= viewportStart - treshold && elementTop <= viewportEnd + treshold;
             });
 
-            inview.trigger("unveil");
+            inview.trigger(unveilString);
             images = images.not(inview);
 
             if (inview.length) {
@@ -138,8 +157,17 @@
             }
         };
 
+        var classLoading = function($elm) {
+            $elm.addClass(unveilString + '-loading');
+        };
+
+        var classLoaded = function($elm) {
+            $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
+            $elm.addClass(unveilString + '-loaded');
+        };
+
         if (!initialized) {
-            $window.on("scroll.unveil resize.unveil lookup.unveil", unveil);
+            $window.on('scroll.' + unveilString + ' resize.' + unveilString + ' lookup.' + unveilString, unveil);
         }
 
         // Wait a little bit for the placeholder to be set, so the src attribute

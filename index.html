@@ -7,6 +7,14 @@
         <title>jQuery Unveil2</title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
         <style>
+            #counter {
+                background-color: silver;
+                padding: 5px 20px;
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+
             li img {
                 max-width: 100%;
                 min-height: 300px;
@@ -35,6 +43,7 @@
         </style>
     </head>
     <body class="container text-center">
+        <div id="counter"><span>0</span> images loaded</div>
         <header>
             <h1>Unveil2.js</h1>
 
@@ -110,24 +119,31 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="jquery.unveil2.js"></script>
         <script>
-            $(function () {
-                $("li img").unveil({
-                    treshold: 100,
-                    success: function () {
-                        console.log('Unveiled', this);
+            var counter = 0;
+            $('img').on('load', function(e) {
+                var self = this;
+                setTimeout(function() {
+                    if ($(self).hasClass('unveil-placeholder') || $(self).hasClass('unveil-loading')) return;
+                    counter++;
+                    $('#counter span').text(counter);
+                }, 100);
+            });
+            $("li img").unveil({
+                treshold: 100,
+                success: function () {
+                    console.log('Unveiled', this);
+                },
+                placeholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                breakpoints: [
+                    {
+                        minWidth: 375,
+                        attribute: 'data-src'
                     },
-                    placeholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-                    breakpoints: [
-                        {
-                            minWidth: 375,
-                            attribute: 'data-src'
-                        },
-                        {
-                            minWidth: 768,
-                            attribute: 'data-src-lg'
-                        }
-                    ]
-                });
+                    {
+                        minWidth: 768,
+                        attribute: 'data-src-lg'
+                    }
+                ]
             });
         </script>
     </body>
