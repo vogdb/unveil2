@@ -8,7 +8,13 @@
  * https://github.com/hongaar/unveil2
  */
 
+/*global
+ console, window
+ */
+
 (function ($) {
+
+    "use strict";
 
     // "unveil" as a variable to save some bytes
     var unveilString = 'unveil',
@@ -67,16 +73,19 @@
             }
         });
 
+
         console.log('Images now in collection', images.length);
 
         // This triggers an image source to be set on the target,
         // based on window width and presence of retina screen
         this.one(unveilString, function () {
-            var $this = $(this), windowWidth = $window.width(),
+            /*jslint plusplus: true */
+
+            var i, $this = $(this), windowWidth = $window.width(),
                 attrib = 'src', targetSrc, defaultSrc, retinaSrc;
 
             // Determine attribute to extract source from
-            for (var i = 0; i < breakpoints.length; i++) {
+            for (i = 0; i < breakpoints.length; i++) {
                 var dataAttrib = breakpoints[i].attribute.replace(/^data-/, '');
                 if (windowWidth >= breakpoints[i].minWidth && $this.data(dataAttrib)) {
                     attrib = dataAttrib;
@@ -134,26 +143,36 @@
             }
         });
 
-        var resize = function () {
-            height = $window.height();
-            unveil();
-        };
+        // Functions below
 
-        var inview = function () {
+        function classLoading($elm) {
+            $elm.addClass(unveilString + '-loading');
+        }
+
+        function classLoaded($elm) {
+            $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
+            $elm.addClass(unveilString + '-loaded');
+        }
+
+        function inview() {
+            /* jshint validthis: true */
+
             var $this = $(this);
 
-            if ($this.is(":hidden")) return;
+            if ($this.is(":hidden")) {
+                return;
+            }
 
             var viewportTop = $window.scrollTop(),
-                viewportEnd = viewportTop + $window.height(),
+                viewportEnd = viewportTop + height,
                 containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
                 elementTop = $this.offset().top + containerTop,
                 elementEnd = elementTop + $this.height();
 
             return elementEnd >= viewportTop - offset && elementTop <= viewportEnd + offset;
-        };
+        }
 
-        var unveil = function () {
+        function unveil() {
             console.log('Unveiling');
 
             var batch = images.filter(inview);
@@ -164,18 +183,14 @@
             if (batch.length) {
                 console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
             }
-        };
+        }
 
-        var classLoading = function ($elm) {
-            $elm.addClass(unveilString + '-loading');
-        };
+        function resize() {
+            height = $window.height();
+            unveil();
+        }
 
-        var classLoaded = function ($elm) {
-            $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
-            $elm.addClass(unveilString + '-loaded');
-        };
-
-        var throttle = function (callback) {
+        function throttle(callback) {
             var wait = false;                  // Initially, we're not waiting
             return function () {               // We return a throttled function
                 if (!wait) {                   // If we're not waiting
@@ -186,8 +201,9 @@
                     }, opts.throttle || 0);
                 }
             };
-        };
+        }
 
+        // Bind global listeners
         if (!initialized) {
             $container.on({
                 'resize.unveil': throttle(resize),
