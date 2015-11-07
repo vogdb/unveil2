@@ -126,6 +126,11 @@
                     // Change classes
                     classLoaded($this);
 
+                    // Fire up the callback if it's a function
+                    if (typeof opts.loaded === "function") {
+                        opts.loaded.call(this);
+                    }
+
                     // Loading the image may have modified page layout,
                     // so unveil again
                     unveil();
@@ -134,11 +139,6 @@
                 // If the image has instantly loaded, change classes now
                 if (this.complete) {
                     classLoaded($this);
-                }
-
-                // Fire up the callback if it's a function
-                if (typeof opts.loaded === "function") {
-                    opts.loaded.call(this);
                 }
             }
         });

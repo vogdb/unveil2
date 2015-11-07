@@ -116,18 +116,11 @@
         <script src="jquery.unveil2.js"></script>
         <script>
             var counter = 0;
-            $('img').on('load', function(e) {
-                var self = this;
-                setTimeout(function() {
-                    if ($(self).hasClass('unveil-placeholder') || $(self).hasClass('unveil-loading')) return;
-                    counter++;
-                    $('#counter span').text(counter);
-                }, 100);
-            });
             $("li img").unveil({
                 offset: 100,
                 loaded: function () {
-                    // Do some stuff here when image is loaded
+                    counter++;
+                    $('#counter span').text(counter);
                 },
                 placeholder: 'http://placehold.it/500x300/C8D3DC?text=placeholder',
                 throttle: 200,
