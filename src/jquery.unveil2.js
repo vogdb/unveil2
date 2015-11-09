@@ -50,7 +50,8 @@
             height = $window.height(),
             breakpoints = opts.breakpoints || [],
             retina = window.devicePixelRatio > 1,
-            debug = opts.debug || false;
+            debug = opts.debug || false,
+            throttleTimeout = opts.throttle || 250;
 
         if (debug) console.log('Called unveil on', this.length, 'elements with the following options:', opts);
 
@@ -194,7 +195,7 @@
                     setTimeout(function () {   // After a period of time
                         callback();            // Execute users function
                         wait = false;          // And allow future invocations
-                    }, opts.throttle || 0);
+                    }, throttleTimeout);
                 }
             };
         }
