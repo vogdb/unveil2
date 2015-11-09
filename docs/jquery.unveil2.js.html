@@ -13,7 +13,7 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">unveil2</h1>
-      <h2 class="project-tagline">unveil2.js is a fork of luis-almeida/unveil</h2><a href="https://github.com/nabble/unveil2" target="_blank" class="btn">View on GitHub</a><a href="https://npmjs.com/package/unveil2" target="_blank" class="btn">View on npm</a>
+      <h2 class="project-tagline">unveil2.js is a lazy load library</h2><a href="https://github.com/nabble/unveil2" target="_blank" class="btn">View on GitHub</a><a href="https://npmjs.com/package/unveil2" target="_blank" class="btn">View on npm</a>
     </section>
     <section data-spy="scroll" data-target=".scrollspy" class="main-content">
       <div class="row">
@@ -29,6 +29,8 @@
                   <li><a href="#initialized"><i class="alert alert-success"></i><span>initialized</span></a>
                   </li>
                   <li><a href="#unveil"><i class="alert alert-info"></i><span>unveil</span></a>
+                  </li>
+                  <li><a href="#$this"><i class="alert alert-success"></i><span>$this</span></a>
                   </li>
                 </ul></a></li>
           </ul>
@@ -110,8 +112,6 @@
 
     opts = opts || {};
 
-    console.log('Called unveil on', this.length, 'elements with the following options:', opts);
-
     // Initialize variables
     var $window = $(window),
         $container = opts.container || $window,
@@ -119,47 +119,20 @@
         offset = opts.offset || 0,
         height = $window.height(),
         breakpoints = opts.breakpoints || [],
-        retina = window.devicePixelRatio &gt; 1;
+        retina = window.devicePixelRatio &gt; 1,
+        debug = opts.debug || false,
+        throttleTimeout = opts.throttle || 250;
+
+    if (debug) console.log('Called unveil on', this.length, 'elements with the following options:', opts);
 
     // Sort sizes array, arrange highest minWidth to front of array
     breakpoints.sort(function (a, b) {
         return b.minWidth - a.minWidth;
     });
 
-    // Read and reset the src attribute first, to prevent loading
-    // of original images
-    this.each(function () {
-        var $this = $(this),
-            elmPlaceholder = $this.data('src-placeholder') || placeholder;
-
-        // Add element to global array
-        images = $(images).add(this);
-
-        // If this element has been called before,
-        // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
-        if (!$this.data(unveilString)) {
-
-            // Set the unveil flag
-            $this.data(unveilString, true);
-
-            // Set data-src if not set
-            if (!$this.data('src')) {
-                $this.data('src', $this.prop('src'));
-            }
-
-            // Set placeholder
-            $this
-                .one('load', function () {
-                    $(this).addClass(unveilString + '-placeholder');
-                    unveil();
-                })
-                .prop('src', '')
-                .prop('src', elmPlaceholder);
-        }
-    });
-
-
-    console.log('Images now in collection', images.length);
+    // -------------------------------
+    // Lazy logic below
+    // -------------------------------
 
     // This triggers an image source to be set on the target,
     // based on window width and presence of retina screen
@@ -189,7 +162,7 @@
         if (defaultSrc) {
             targetSrc = (retina &amp;&amp; retinaSrc) ? retinaSrc : defaultSrc;
 
-            console.log('Unveiling image', {
+            if (debug) console.log('Unveiling image', {
                 attribute: attrib,
                 retina: retina,
                 defaultSrc: defaultSrc,
@@ -226,82 +199,135 @@
         }
     });
 
+    // -------------------------------
     // Functions below
+    // -------------------------------</code></pre>
+          <section id="$this">
+            <h1>$this</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>$this</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$elm</td>
+                <td>object</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Zepto doesn&#39;t support the :visible and :hidden selector by default</p></div>
+          <pre><code class="language-javascript">var $this = $(this);
 
-    function classLoading($elm) {
-        $elm.addClass(unveilString + '-loading');
-    }
+if (!visible($this)) {
+    return;
+}
 
-    function classLoaded($elm) {
-        $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
-        $elm.addClass(unveilString + '-loaded');
-    }
+var viewportTop = $window.scrollTop(),
+    viewportEnd = viewportTop + height,
+    containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
+    elementTop = $this.offset().top + containerTop,
+    elementEnd = elementTop + $this.height();
 
-    function inview() {
-        var $this = $(this);
-
-        if ($this.is(&quot;:hidden&quot;)) {
-            return;
+return elementEnd &gt;= viewportTop - offset &amp;&amp; elementTop &lt;= viewportEnd + offset;
         }
 
-        var viewportTop = $window.scrollTop(),
-            viewportEnd = viewportTop + height,
-            containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
-            elementTop = $this.offset().top + containerTop,
-            elementEnd = elementTop + $this.height();
+        function unveil() {
+if (debug) console.log('Unveiling');
 
-        return elementEnd &gt;= viewportTop - offset &amp;&amp; elementTop &lt;= viewportEnd + offset;
-    }
+var batch = images.filter(inview);
 
-    function unveil() {
-        console.log('Unveiling');
+batch.trigger(unveilString);
+images = images.not(batch);
 
-        var batch = images.filter(inview);
-
-        batch.trigger(unveilString);
-        images = images.not(batch);
-
-        if (batch.length) {
-            console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+if (batch.length) {
+    if (debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+}
         }
+
+        function resize() {
+height = $window.height();
+unveil();
+        }
+
+        function throttle(callback) {
+var wait = false;                  // Initially, we're not waiting
+return function () {               // We return a throttled function
+    if (!wait) {                   // If we're not waiting
+        wait = true;               // Prevent future invocations
+        setTimeout(function () {   // After a period of time
+            callback();            // Execute users function
+            wait = false;          // And allow future invocations
+        }, throttleTimeout);
     }
-
-    function resize() {
-        height = $window.height();
-        unveil();
-    }
-
-    function throttle(callback) {
-        var wait = false;                  // Initially, we're not waiting
-        return function () {               // We return a throttled function
-            if (!wait) {                   // If we're not waiting
-                wait = true;               // Prevent future invocations
-                setTimeout(function () {   // After a period of time
-                    callback();            // Execute users function
-                    wait = false;          // And allow future invocations
-                }, opts.throttle || 0);
-            }
-        };
-    }
-
-    // Bind global listeners
-    if (!initialized) {
-        $container.on({
-            'resize.unveil': throttle(resize),
-            'scroll.unveil': throttle(unveil),
-            'lookup.unveil': unveil
-        });
-    }
-
-    // Wait a little bit for the placeholder to be set, so the src attribute
-    // is not empty (which will mark the image as hidden)
-    setTimeout(unveil, 0);
-
-    initialized = true;
-
-    return this;
-
 };
+        }
+
+        // -------------------------------
+        // Bootstrapping below
+        // -------------------------------
+
+        // Read and reset the src attribute first, to prevent loading
+        // of original images
+        this.each(function () {
+var $this = $(this),
+    elmPlaceholder = $this.data('src-placeholder') || placeholder;
+
+// Add element to global array
+images = $(images).add(this);
+
+// If this element has been called before,
+// don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
+if (!$this.data(unveilString)) {
+
+    // Set the unveil flag
+    $this.data(unveilString, true);
+
+    // Set data-src if not set
+    if (!$this.data('src')) {
+        $this.data('src', $this.prop('src'));
+    }
+
+    // Set placeholder
+    $this
+        .one('load', function () {
+            $(this).addClass(unveilString + '-placeholder');
+            unveil();
+        })
+        .prop('src', '')
+        .prop('src', elmPlaceholder);
+}
+        });
+
+        if (debug) console.log('Images now in collection', images.length);
+
+        // Bind global listeners
+        if (!initialized) {
+$container.on({
+    'resize.unveil': throttle(resize),
+    'scroll.unveil': throttle(unveil),
+    'lookup.unveil': unveil
+});
+        }
+
+        // Wait a little bit for the placeholder to be set, so the src attribute
+        // is not empty (which will mark the image as hidden)
+        setTimeout(unveil, 0);
+
+        initialized = true;
+
+        return this;
+
+    };
 
 })(window.jQuery || window.Zepto);</code></pre>
           <div class="footer site-footer">
