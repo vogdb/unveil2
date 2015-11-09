@@ -81,6 +81,21 @@ module.exports = function (grunt) {
                     base: '.'
                 }
             }
+        },
+
+        /**
+         * Doxx
+         *
+         * @github.com/evertton/grunt-doxx
+         */
+        doxx: {
+            all: {
+                src: 'src',
+                target: 'docs',
+                options: {
+                    theme: 'cayman'
+                }
+            }
         }
     });
 
@@ -104,7 +119,8 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('build', [
         'test',
-        'uglify'
+        'uglify',
+        'doxx'
     ]);
 
 
@@ -115,4 +131,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-doxx');
 };

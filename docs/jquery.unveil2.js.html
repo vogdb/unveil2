@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>unveil2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/cayman.css">
+    <link rel="stylesheet" href="css/prism.css">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">unveil2</h1>
+      <h2 class="project-tagline">unveil2.js is a fork of luis-almeida/unveil</h2><a href="https://github.com/nabble/unveil2" target="_blank" class="btn">View on GitHub</a><a href="https://npmjs.com/package/unveil2" target="_blank" class="btn">View on npm</a>
+    </section>
+    <section data-spy="scroll" data-target=".scrollspy" class="main-content">
+      <div class="row">
+        <div class="col-md-3 bs-docs-sidebar">
+          <ul id="sidebar" class="nav nav-stacked fixed">
+            <li><a href="index.html">Main</a></li>
+            <li class="active"><a href="jquery.unveil2.js.html">jquery.unveil2.js
+                <ul class="nav nav-stacked">
+                  <li><a href="#unveilString"><i class="alert alert-success"></i><span>unveilString</span></a>
+                  </li>
+                  <li><a href="#images"><i class="alert alert-success"></i><span>images</span></a>
+                  </li>
+                  <li><a href="#initialized"><i class="alert alert-success"></i><span>initialized</span></a>
+                  </li>
+                  <li><a href="#unveil"><i class="alert alert-info"></i><span>unveil</span></a>
+                  </li>
+                </ul></a></li>
+          </ul>
+        </div>
+        <div class="col-md-9">
+          <div class="description"><p>jQuery Unveil2<br />A very lightweight jQuery/Zepto plugin to lazy load images<br />Based on <a href="https://github.com/luis-almeida/unveil">https://github.com/luis-almeida/unveil</a></p><p>Licensed under the MIT license.<br />Copyright 2015 Joram van den Boezem<br /><a href="https://github.com/nabble/unveil2">https://github.com/nabble/unveil2</a></p></div>
+          <div class="description"><p>global<br /> console, window</p></div>
+          <pre><code class="language-javascript">(function ($) {
+
+    &quot;use strict&quot;;</code></pre>
+          <section id="unveilString">
+            <h1>unveilString</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>unveilString</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Store the string &#39;unveil&#39; in a variable to save some bytes</p></div>
+          <pre><code class="language-javascript">var unveilString = 'unveil';</code></pre>
+          <section id="images">
+            <h1>images</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>images</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>A jQuery/Zepto collection of images which will be lazy loaded</p></div>
+          <pre><code class="language-javascript">var images = $();</code></pre>
+          <section id="initialized">
+            <h1>initialized</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>initialized</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>initialized</td>
+                <td>Boolean</td>
+                <td><p>A flag to set initialized state, so we can set global listeners only once</p></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"></div>
+          <pre><code class="language-javascript">var initialized = false;</code></pre>
+          <section id="unveil">
+            <h1>unveil</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>$.fn.unveil()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>opts</td>
+                <td></td>
+                <td><p>{Object} options</p></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>The unveil2 plugin</p></div>
+          <pre><code class="language-javascript">$.fn.unveil = function (opts) {
+
+    opts = opts || {};
+
+    console.log('Called unveil on', this.length, 'elements with the following options:', opts);
+
+    // Initialize variables
+    var $window = $(window),
+        $container = opts.container || $window,
+        placeholder = opts.placeholder || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        offset = opts.offset || 0,
+        height = $window.height(),
+        breakpoints = opts.breakpoints || [],
+        retina = window.devicePixelRatio &gt; 1;
+
+    // Sort sizes array, arrange highest minWidth to front of array
+    breakpoints.sort(function (a, b) {
+        return b.minWidth - a.minWidth;
+    });
+
+    // Read and reset the src attribute first, to prevent loading
+    // of original images
+    this.each(function () {
+        var $this = $(this),
+            elmPlaceholder = $this.data('src-placeholder') || placeholder;
+
+        // Add element to global array
+        images = $(images).add(this);
+
+        // If this element has been called before,
+        // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
+        if (!$this.data(unveilString)) {
+
+            // Set the unveil flag
+            $this.data(unveilString, true);
+
+            // Set data-src if not set
+            if (!$this.data('src')) {
+                $this.data('src', $this.prop('src'));
+            }
+
+            // Set placeholder
+            $this
+                .one('load', function () {
+                    $(this).addClass(unveilString + '-placeholder');
+                    unveil();
+                })
+                .prop('src', '')
+                .prop('src', elmPlaceholder);
+        }
+    });
+
+
+    console.log('Images now in collection', images.length);
+
+    // This triggers an image source to be set on the target,
+    // based on window width and presence of retina screen
+    this.one(unveilString, function () {
+        var i, $this = $(this), windowWidth = $window.width(),
+            attrib = 'src', targetSrc, defaultSrc, retinaSrc;
+
+        // Determine attribute to extract source from
+        for (i = 0; i &lt; breakpoints.length; i++) {
+            var dataAttrib = breakpoints[i].attribute.replace(/^data-/, '');
+            if (windowWidth &gt;= breakpoints[i].minWidth &amp;&amp; $this.data(dataAttrib)) {
+                attrib = dataAttrib;
+                break;
+            }
+        }
+
+        // Extract source
+        defaultSrc = retinaSrc = $this.data(attrib);
+
+        // Do we have a retina source?
+        if (defaultSrc &amp;&amp; defaultSrc.indexOf(&quot;|&quot;) !== -1) {
+            retinaSrc = defaultSrc.split(&quot;|&quot;)[1];
+            defaultSrc = defaultSrc.split(&quot;|&quot;)[0];
+        }
+
+        // Change attribute on image
+        if (defaultSrc) {
+            targetSrc = (retina &amp;&amp; retinaSrc) ? retinaSrc : defaultSrc;
+
+            console.log('Unveiling image', {
+                attribute: attrib,
+                retina: retina,
+                defaultSrc: defaultSrc,
+                retinaSrc: retinaSrc,
+                targetSrc: targetSrc
+            });
+
+            // Change classes
+            classLoading($this);
+
+            // Set new source
+            $this.prop(&quot;src&quot;, targetSrc);
+
+            // When new source has loaded, do stuff
+            $this.one('load', function () {
+
+                // Change classes
+                classLoaded($this);
+
+                // Fire up the callback if it's a function
+                if (typeof opts.loaded === &quot;function&quot;) {
+                    opts.loaded.call(this);
+                }
+
+                // Loading the image may have modified page layout,
+                // so unveil again
+                unveil();
+            });
+
+            // If the image has instantly loaded, change classes now
+            if (this.complete) {
+                classLoaded($this);
+            }
+        }
+    });
+
+    // Functions below
+
+    function classLoading($elm) {
+        $elm.addClass(unveilString + '-loading');
+    }
+
+    function classLoaded($elm) {
+        $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
+        $elm.addClass(unveilString + '-loaded');
+    }
+
+    function inview() {
+        var $this = $(this);
+
+        if ($this.is(&quot;:hidden&quot;)) {
+            return;
+        }
+
+        var viewportTop = $window.scrollTop(),
+            viewportEnd = viewportTop + height,
+            containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
+            elementTop = $this.offset().top + containerTop,
+            elementEnd = elementTop + $this.height();
+
+        return elementEnd &gt;= viewportTop - offset &amp;&amp; elementTop &lt;= viewportEnd + offset;
+    }
+
+    function unveil() {
+        console.log('Unveiling');
+
+        var batch = images.filter(inview);
+
+        batch.trigger(unveilString);
+        images = images.not(batch);
+
+        if (batch.length) {
+            console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+        }
+    }
+
+    function resize() {
+        height = $window.height();
+        unveil();
+    }
+
+    function throttle(callback) {
+        var wait = false;                  // Initially, we're not waiting
+        return function () {               // We return a throttled function
+            if (!wait) {                   // If we're not waiting
+                wait = true;               // Prevent future invocations
+                setTimeout(function () {   // After a period of time
+                    callback();            // Execute users function
+                    wait = false;          // And allow future invocations
+                }, opts.throttle || 0);
+            }
+        };
+    }
+
+    // Bind global listeners
+    if (!initialized) {
+        $container.on({
+            'resize.unveil': throttle(resize),
+            'scroll.unveil': throttle(unveil),
+            'lookup.unveil': unveil
+        });
+    }
+
+    // Wait a little bit for the placeholder to be set, so the src attribute
+    // is not empty (which will mark the image as hidden)
+    setTimeout(unveil, 0);
+
+    initialized = true;
+
+    return this;
+
+};
+
+})(window.jQuery || window.Zepto);</code></pre>
+          <div class="footer site-footer">
+            <div class="span site-footer-owner"><a href="https://github.com/iwatakeshi/doxx-theme-cayman">Cayman</a> is maintained by <a href="https://github.com/iwatakeshi">iwatakeshi</a>.</div>
+            <div class="span site-footer-credits">This page was generated by <a href="https://github.com/FGRibreau/doxx">Doxx</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/affix.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/scrollspy.js"></script>
+    <script src="js/prism.js"></script>
+    <script src="js/prism-bash.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('body').scrollspy({
+          target: ".bs-docs-sidebar",
+          offset: 40
+        }) 
+      });
+    </script>
+  </body>
+</html>

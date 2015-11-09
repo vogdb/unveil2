@@ -24,7 +24,8 @@
     "grunt-contrib-uglify": "*",
     "grunt-contrib-connect": "^0.11.0",
     "grunt-contrib-jshint": "*",
-    "grunt-contrib-qunit": "^0.7.0"
+    "grunt-contrib-qunit": "^0.7.0",
+    "grunt-doxx": "^0.1.0"
   },
   "scripts": {
     "test": "grunt test"
