@@ -11,17 +11,15 @@
 
 Install unveil2.js by downloading a copy of [`jquery.unveil2.min.js`](https://raw.githubusercontent.com/nabble/unveil2/develop/dist/jquery.unveil2.min.js) and add it to your page after [jQuery](http://jquery.com) or [Zepto](http://zeptojs.com):
 
-```
+```html
 <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="jquery.unveil2.min.js"></script>
 ```
 
 And call the unveil plugin on the images you want to be lazily loaded:
 
-```
-<script>
-    $('img').unveil();
-</script>
+```js
+$('img').unveil();
 ```
 
 __Note:__ If you load scripts at the bottom of the page, [you don't have to wait for `$.ready`](http://stackoverflow.com/a/9558601/938297).
@@ -54,7 +52,7 @@ __Note:__ Don't replace the original image in the `src` attribute with a placeho
 
 Specify larger images to be used on larger screen-widths by adding attributes and passing an array of breakpoints when invoking unveil2, for a true mobile-first experience :)
 
-```
+```html
 <img src="small.png" data-src-md="medium.png" />
 <script>
 $('img').unveil({
@@ -68,7 +66,7 @@ $('img').unveil({
 
 ### Advanced example
 
-```
+```html
 <img src="http://loremflickr.com/450/300"
     data-src="http://loremflickr.com/450/300|http://loremflickr.com/900/600"
     data-src-md="http://loremflickr.com/750/500|http://loremflickr.com/1500/1000"
@@ -118,7 +116,7 @@ $('img').unveil({
 
 You can still trigger image loading whenever you need. All you have to do is select the images you want to 'unveil' and trigger the event:
 
-```
+```js
 $("img").trigger("unveil");
 ```
 
@@ -126,7 +124,7 @@ $("img").trigger("unveil");
 
 It is also possible to lookup for images in the viewport that haven't been 'unveiled' yet. This can be useful, for instance, in case of a tabbed layout.
 
-```
+```js
 $(window).trigger("lookup");
 ```
 
@@ -134,7 +132,7 @@ $(window).trigger("lookup");
 
 You can remove all the 'unveil' event handlers from 'window':
 
-```
+```js
 $(window).off("unveil");
 ```
 
