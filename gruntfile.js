@@ -14,7 +14,7 @@ module.exports = function (grunt) {
         /**
          * Set banner.
          */
-        banner: '/** <%= pkg.title %> - <%= pkg.homepage %> **/\n',
+        banner: '// <%= pkg.title %> - <%= pkg.version %> - <%= pkg.homepage %>\n',
 
 
         /**
@@ -61,7 +61,8 @@ module.exports = function (grunt) {
             default: {
                 options: {
                     urls: [
-                        'http://localhost:8000/test/tests.html'
+                        'http://localhost:8000/test/jquery.html',
+                        'http://localhost:8000/test/zepto.html'
                     ]
                 }
             }
