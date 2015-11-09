@@ -1,11 +1,11 @@
 /**
  * jQuery Unveil2
- * A very lightweight jQuery plugin to lazy load images
+ * A very lightweight jQuery/Zepto plugin to lazy load images
  * Based on https://github.com/luis-almeida/unveil
  *
  * Licensed under the MIT license.
  * Copyright 2015 Joram van den Boezem
- * https://github.com/hongaar/unveil2
+ * https://github.com/nabble/unveil2
  */
 
 /*global
@@ -16,11 +16,28 @@
 
     "use strict";
 
-    // "unveil" as a variable to save some bytes
-    var unveilString = 'unveil',
-        images = $(),
-        initialized = false;
+    /**
+     * Store the string 'unveil' in a variable to save some bytes
+     *
+     */
+    var unveilString = 'unveil';
 
+    /**
+     * A jQuery/Zepto collection of images which will be lazy loaded
+     */
+    var images = $();
+
+    /**
+     * @param {Boolean} initialized A flag to set initialized state, so we can set global listeners only once
+     */
+    var initialized = false;
+
+    /**
+     * The unveil2 plugin
+     *
+     * @param opts {Object} options
+     * @returns {$}
+     */
     $.fn.unveil = function (opts) {
 
         opts = opts || {};
@@ -79,8 +96,6 @@
         // This triggers an image source to be set on the target,
         // based on window width and presence of retina screen
         this.one(unveilString, function () {
-            /*jslint plusplus: true */
-
             var i, $this = $(this), windowWidth = $window.width(),
                 attrib = 'src', targetSrc, defaultSrc, retinaSrc;
 
@@ -155,8 +170,6 @@
         }
 
         function inview() {
-            /* jshint validthis: true */
-
             var $this = $(this);
 
             if ($this.is(":hidden")) {

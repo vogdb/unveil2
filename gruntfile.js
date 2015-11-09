@@ -23,7 +23,7 @@ module.exports = function (grunt) {
          * @github.com/gruntjs/grunt-contrib-jshint
          */
         jshint: {
-            files: ['Gruntfile.js', 'jquery.unveil2.js'],
+            files: ['Gruntfile.js', 'src/jquery.unveil2.js'],
             options: {
                 globals: {
                     jQuery: true
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
             },
             default: {
                 files: {
-                    'jquery.unveil2.min.js': ['jquery.unveil2.js']
+                    'dist/jquery.unveil2.min.js': ['src/jquery.unveil2.js']
                 }
             }
         },
