@@ -42,8 +42,6 @@
 
         opts = opts || {};
 
-        console.log('Called unveil on', this.length, 'elements with the following options:', opts);
-
         // Initialize variables
         var $window = $(window),
             $container = opts.container || $window,
@@ -51,47 +49,19 @@
             offset = opts.offset || 0,
             height = $window.height(),
             breakpoints = opts.breakpoints || [],
-            retina = window.devicePixelRatio > 1;
+            retina = window.devicePixelRatio > 1,
+            debug = opts.debug || false;
+
+        if (debug) console.log('Called unveil on', this.length, 'elements with the following options:', opts);
 
         // Sort sizes array, arrange highest minWidth to front of array
         breakpoints.sort(function (a, b) {
             return b.minWidth - a.minWidth;
         });
 
-        // Read and reset the src attribute first, to prevent loading
-        // of original images
-        this.each(function () {
-            var $this = $(this),
-                elmPlaceholder = $this.data('src-placeholder') || placeholder;
-
-            // Add element to global array
-            images = $(images).add(this);
-
-            // If this element has been called before,
-            // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
-            if (!$this.data(unveilString)) {
-
-                // Set the unveil flag
-                $this.data(unveilString, true);
-
-                // Set data-src if not set
-                if (!$this.data('src')) {
-                    $this.data('src', $this.prop('src'));
-                }
-
-                // Set placeholder
-                $this
-                    .one('load', function () {
-                        $(this).addClass(unveilString + '-placeholder');
-                        unveil();
-                    })
-                    .prop('src', '')
-                    .prop('src', elmPlaceholder);
-            }
-        });
-
-
-        console.log('Images now in collection', images.length);
+        // -------------------------------
+        // Lazy logic below
+        // -------------------------------
 
         // This triggers an image source to be set on the target,
         // based on window width and presence of retina screen
@@ -121,7 +91,7 @@
             if (defaultSrc) {
                 targetSrc = (retina && retinaSrc) ? retinaSrc : defaultSrc;
 
-                console.log('Unveiling image', {
+                if (debug) console.log('Unveiling image', {
                     attribute: attrib,
                     retina: retina,
                     defaultSrc: defaultSrc,
@@ -158,7 +128,19 @@
             }
         });
 
+        // -------------------------------
         // Functions below
+        // -------------------------------
+
+        /**
+         * Zepto doesn't support the :visible and :hidden selector by default
+         *
+         * @param {object} $elm
+         * @returns {boolean}
+         */
+        function visible($elm) {
+            return !!($elm.width() || $elm.height()) && $elm.css("display") !== "none";
+        }
 
         function classLoading($elm) {
             $elm.addClass(unveilString + '-loading');
@@ -170,9 +152,10 @@
         }
 
         function inview() {
+            /* jshint validthis: true */
             var $this = $(this);
 
-            if ($this.is(":hidden")) {
+            if (!visible($this)) {
                 return;
             }
 
@@ -186,7 +169,7 @@
         }
 
         function unveil() {
-            console.log('Unveiling');
+            if (debug) console.log('Unveiling');
 
             var batch = images.filter(inview);
 
@@ -194,7 +177,7 @@
             images = images.not(batch);
 
             if (batch.length) {
-                console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+                if (debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
             }
         }
 
@@ -215,6 +198,44 @@
                 }
             };
         }
+
+        // -------------------------------
+        // Bootstrapping below
+        // -------------------------------
+
+        // Read and reset the src attribute first, to prevent loading
+        // of original images
+        this.each(function () {
+            var $this = $(this),
+                elmPlaceholder = $this.data('src-placeholder') || placeholder;
+
+            // Add element to global array
+            images = $(images).add(this);
+
+            // If this element has been called before,
+            // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
+            if (!$this.data(unveilString)) {
+
+                // Set the unveil flag
+                $this.data(unveilString, true);
+
+                // Set data-src if not set
+                if (!$this.data('src')) {
+                    $this.data('src', $this.prop('src'));
+                }
+
+                // Set placeholder
+                $this
+                    .one('load', function () {
+                        $(this).addClass(unveilString + '-placeholder');
+                        unveil();
+                    })
+                    .prop('src', '')
+                    .prop('src', elmPlaceholder);
+            }
+        });
+
+        if (debug) console.log('Images now in collection', images.length);
 
         // Bind global listeners
         if (!initialized) {
