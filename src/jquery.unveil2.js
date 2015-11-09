@@ -1,5 +1,5 @@
 /**
- * jQuery Unveil2
+ * Unveil2.js
  * A very lightweight jQuery/Zepto plugin to lazy load images
  * Based on https://github.com/luis-almeida/unveil
  *
@@ -7,14 +7,14 @@
  * Copyright 2015 Joram van den Boezem
  * https://github.com/nabble/unveil2
  */
-
-/*global
- console, window
- */
-
 (function ($) {
 
     "use strict";
+
+    /**
+     * # GLOBAL VARIABLES
+     * ---
+     */
 
     /**
      * Store the string 'unveil' in a variable to save some bytes
@@ -28,14 +28,17 @@
     var images = $();
 
     /**
-     * @param {Boolean} initialized A flag to set initialized state, so we can set global listeners only once
+     * A flag to set initialized state, so we can set global listeners only once
      */
     var initialized = false;
 
     /**
-     * The unveil2 plugin
-     *
-     * @param opts {Object} options
+     * # PLUGIN
+     * ---
+     */
+
+    /**
+     * @param {object} opts An object of options, see API section in README
      * @returns {$}
      */
     $.fn.unveil = function (opts) {
@@ -44,28 +47,34 @@
 
         // Initialize variables
         var $window = $(window),
-            $container = opts.container || $window,
+            height = $window.height(),
+            retina = window.devicePixelRatio > 1;
+
+        // Initialize defaults
+        var $container = opts.container || $window,
             placeholder = opts.placeholder || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
             offset = opts.offset || 0,
-            height = $window.height(),
             breakpoints = opts.breakpoints || [],
-            retina = window.devicePixelRatio > 1,
-            debug = opts.debug || false,
-            throttleTimeout = opts.throttle || 250;
+            throttleTimeout = opts.throttle || 250,
+            debug = opts.debug || false;
 
         if (debug) console.log('Called unveil on', this.length, 'elements with the following options:', opts);
 
-        // Sort sizes array, arrange highest minWidth to front of array
+        /**
+         * Sort sizes array, arrange highest minWidth to front of array
+         */
         breakpoints.sort(function (a, b) {
             return b.minWidth - a.minWidth;
         });
 
-        // -------------------------------
-        // Lazy logic below
-        // -------------------------------
+        /**
+         * # UNVEIL IMAGES
+         * ---
+         */
 
-        // This triggers an image source to be set on the target,
-        // based on window width and presence of retina screen
+        /**
+         * This is the actual plugin logic, which determines the source attribute to use based on window width and presence of a retina screen, changes the source of the image, handles class name changes and triggers a callback if set. Once the image has been loaded, start the unveil lookup because the page layout could have changed.
+         */
         this.one(unveilString, function () {
             var i, $this = $(this), windowWidth = $window.width(),
                 attrib = 'src', targetSrc, defaultSrc, retinaSrc;
@@ -119,7 +128,7 @@
 
                     // Loading the image may have modified page layout,
                     // so unveil again
-                    unveil();
+                    lookup();
                 });
 
                 // If the image has instantly loaded, change classes now
@@ -129,9 +138,10 @@
             }
         });
 
-        // -------------------------------
-        // Functions below
-        // -------------------------------
+        /**
+         * # HELPER FUNCTIONS
+         * ---
+         */
 
         /**
          * Zepto doesn't support the :visible and :hidden selector by default
@@ -143,17 +153,32 @@
             return !!($elm.width() || $elm.height()) && $elm.css("display") !== "none";
         }
 
+        /**
+         * Sets the classes when an image is loading
+         *
+         * @param {object} $elm
+         */
         function classLoading($elm) {
             $elm.addClass(unveilString + '-loading');
         }
 
+        /**
+         * Sets the classes when an image is done loading
+         *
+         * @param {object} $elm
+         */
         function classLoaded($elm) {
             $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
             $elm.addClass(unveilString + '-loaded');
         }
 
+        /**
+         * Filter function which returns true when a given image is in the viewport.
+         *
+         * @returns {boolean}
+         */
         function inview() {
-            /* jshint validthis: true */
+            // jshint validthis: true
             var $this = $(this);
 
             if (!visible($this)) {
@@ -169,24 +194,20 @@
             return elementEnd >= viewportTop - offset && elementTop <= viewportEnd + offset;
         }
 
-        function unveil() {
-            if (debug) console.log('Unveiling');
-
-            var batch = images.filter(inview);
-
-            batch.trigger(unveilString);
-            images = images.not(batch);
-
-            if (batch.length) {
-                if (debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
-            }
-        }
-
+        /**
+         * Sets the window height and calls the lookup function
+         */
         function resize() {
             height = $window.height();
-            unveil();
+            lookup();
         }
 
+        /**
+         * Throttle function with function call in tail. Based on http://sampsonblog.com/749/simple-throttle-function
+         *
+         * @param {function} callback
+         * @returns {function}
+         */
         function throttle(callback) {
             var wait = false;                  // Initially, we're not waiting
             return function () {               // We return a throttled function
@@ -200,12 +221,35 @@
             };
         }
 
-        // -------------------------------
-        // Bootstrapping below
-        // -------------------------------
+        /**
+         * # LOOKUP FUNCTION
+         * ---
+         */
 
-        // Read and reset the src attribute first, to prevent loading
-        // of original images
+        /**
+         * Function which filters images which are in view and triggers the unveil event on those images.
+         */
+        function lookup() {
+            if (debug) console.log('Unveiling');
+
+            var batch = images.filter(inview);
+
+            batch.trigger(unveilString);
+            images = images.not(batch);
+
+            if (batch.length) {
+                if (debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+            }
+        }
+
+        /**
+         * # BOOTSTRAPPING
+         * ---
+         */
+
+        /**
+         * Read and reset the src attribute, to prevent loading of original images
+         */
         this.each(function () {
             var $this = $(this),
                 elmPlaceholder = $this.data('src-placeholder') || placeholder;
@@ -229,7 +273,7 @@
                 $this
                     .one('load', function () {
                         $(this).addClass(unveilString + '-placeholder');
-                        unveil();
+                        lookup();
                     })
                     .prop('src', '')
                     .prop('src', elmPlaceholder);
@@ -238,21 +282,26 @@
 
         if (debug) console.log('Images now in collection', images.length);
 
-        // Bind global listeners
-        if (!initialized) {
+        /**
+         * Bind global listeners
+         */
+        {if (!initialized) {
             $container.on({
                 'resize.unveil': throttle(resize),
-                'scroll.unveil': throttle(unveil),
-                'lookup.unveil': unveil
+                'scroll.unveil': throttle(lookup),
+                'lookup.unveil': lookup
             });
-        }
+            initialized = true;
+        }}
 
-        // Wait a little bit for the placeholder to be set, so the src attribute
-        // is not empty (which will mark the image as hidden)
-        setTimeout(unveil, 0);
+        /**
+         * Wait a little bit for the placeholder to be set, so the src attribute is not empty (which will mark the image as hidden)
+         */
+        {setTimeout(lookup, 0);}
 
-        initialized = true;
-
+        /**
+         * That's all folks!
+         */
         return this;
 
     };

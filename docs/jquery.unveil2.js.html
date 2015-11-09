@@ -30,17 +30,31 @@
                   </li>
                   <li><a href="#unveil"><i class="alert alert-info"></i><span>unveil</span></a>
                   </li>
-                  <li><a href="#$this"><i class="alert alert-success"></i><span>$this</span></a>
+                  <li><a href="#visible"><i class="alert alert-info"></i><span>visible</span></a>
+                  </li>
+                  <li><a href="#classLoading"><i class="alert alert-info"></i><span>classLoading</span></a>
+                  </li>
+                  <li><a href="#classLoaded"><i class="alert alert-info"></i><span>classLoaded</span></a>
+                  </li>
+                  <li><a href="#inview"><i class="alert alert-info"></i><span>inview</span></a>
+                  </li>
+                  <li><a href="#resize"><i class="alert alert-info"></i><span>resize</span></a>
+                  </li>
+                  <li><a href="#throttle"><i class="alert alert-info"></i><span>throttle</span></a>
+                  </li>
+                  <li><a href="#lookup"><i class="alert alert-info"></i><span>lookup</span></a>
                   </li>
                 </ul></a></li>
           </ul>
         </div>
         <div class="col-md-9">
-          <div class="description"><p>jQuery Unveil2<br />A very lightweight jQuery/Zepto plugin to lazy load images<br />Based on <a href="https://github.com/luis-almeida/unveil">https://github.com/luis-almeida/unveil</a></p><p>Licensed under the MIT license.<br />Copyright 2015 Joram van den Boezem<br /><a href="https://github.com/nabble/unveil2">https://github.com/nabble/unveil2</a></p></div>
-          <div class="description"><p>global<br /> console, window</p></div>
+          <div class="description"><p>Unveil2.js<br />A very lightweight jQuery/Zepto plugin to lazy load images<br />Based on <a href="https://github.com/luis-almeida/unveil">https://github.com/luis-almeida/unveil</a></p><p>Licensed under the MIT license.<br />Copyright 2015 Joram van den Boezem<br /><a href="https://github.com/nabble/unveil2">https://github.com/nabble/unveil2</a></p></div>
           <pre><code class="language-javascript">(function ($) {
 
     &quot;use strict&quot;;</code></pre>
+          <div class="description"><h1>GLOBAL VARIABLES</h1>
+<hr>
+</div>
           <section id="unveilString">
             <h1>unveilString</h1>
             <h5 class="subheader"></h5>
@@ -66,24 +80,11 @@
               <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>initialized</span><span>&nbsp;</span>
             </p>
           </section>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:20%">Option name</th>
-                <th style="width:20%">Type</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>initialized</td>
-                <td>Boolean</td>
-                <td><p>A flag to set initialized state, so we can set global listeners only once</p></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="description"></div>
+          <div class="description"><p>A flag to set initialized state, so we can set global listeners only once</p></div>
           <pre><code class="language-javascript">var initialized = false;</code></pre>
+          <div class="description"><h1>PLUGIN</h1>
+<hr>
+</div>
           <section id="unveil">
             <h1>unveil</h1>
             <h5 class="subheader"></h5>
@@ -102,111 +103,108 @@
             <tbody>
               <tr>
                 <td>opts</td>
-                <td></td>
-                <td><p>{Object} options</p></td>
+                <td>object</td>
+                <td><p>An object of options, see API section in README</p></td>
               </tr>
             </tbody>
           </table>
-          <div class="description"><p>The unveil2 plugin</p></div>
+          <div class="description"></div>
           <pre><code class="language-javascript">$.fn.unveil = function (opts) {
 
     opts = opts || {};
 
     // Initialize variables
     var $window = $(window),
-        $container = opts.container || $window,
+        height = $window.height(),
+        retina = window.devicePixelRatio &gt; 1;
+
+    // Initialize defaults
+    var $container = opts.container || $window,
         placeholder = opts.placeholder || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
         offset = opts.offset || 0,
-        height = $window.height(),
         breakpoints = opts.breakpoints || [],
-        retina = window.devicePixelRatio &gt; 1,
-        debug = opts.debug || false,
-        throttleTimeout = opts.throttle || 250;
+        throttleTimeout = opts.throttle || 250,
+        debug = opts.debug || false;
 
-    if (debug) console.log('Called unveil on', this.length, 'elements with the following options:', opts);
+    if (debug) console.log('Called unveil on', this.length, 'elements with the following options:', opts);</code></pre>
+          <div class="description"><p>Sort sizes array, arrange highest minWidth to front of array</p></div>
+          <pre><code class="language-javascript">breakpoints.sort(function (a, b) {
+    return b.minWidth - a.minWidth;
+});</code></pre>
+          <div class="description"><h1>UNVEIL IMAGES</h1>
+<hr>
+</div>
+          <div class="description"><p>This is the actual plugin logic, which determines the source attribute to use based on window width and presence of a retina screen, changes the source of the image, handles class name changes and triggers a callback if set. Once the image has been loaded, start the unveil lookup because the page layout could have changed.</p></div>
+          <pre><code class="language-javascript">this.one(unveilString, function () {
+    var i, $this = $(this), windowWidth = $window.width(),
+        attrib = 'src', targetSrc, defaultSrc, retinaSrc;
 
-    // Sort sizes array, arrange highest minWidth to front of array
-    breakpoints.sort(function (a, b) {
-        return b.minWidth - a.minWidth;
-    });
-
-    // -------------------------------
-    // Lazy logic below
-    // -------------------------------
-
-    // This triggers an image source to be set on the target,
-    // based on window width and presence of retina screen
-    this.one(unveilString, function () {
-        var i, $this = $(this), windowWidth = $window.width(),
-            attrib = 'src', targetSrc, defaultSrc, retinaSrc;
-
-        // Determine attribute to extract source from
-        for (i = 0; i &lt; breakpoints.length; i++) {
-            var dataAttrib = breakpoints[i].attribute.replace(/^data-/, '');
-            if (windowWidth &gt;= breakpoints[i].minWidth &amp;&amp; $this.data(dataAttrib)) {
-                attrib = dataAttrib;
-                break;
-            }
+    // Determine attribute to extract source from
+    for (i = 0; i &lt; breakpoints.length; i++) {
+        var dataAttrib = breakpoints[i].attribute.replace(/^data-/, '');
+        if (windowWidth &gt;= breakpoints[i].minWidth &amp;&amp; $this.data(dataAttrib)) {
+            attrib = dataAttrib;
+            break;
         }
+    }
 
-        // Extract source
-        defaultSrc = retinaSrc = $this.data(attrib);
+    // Extract source
+    defaultSrc = retinaSrc = $this.data(attrib);
 
-        // Do we have a retina source?
-        if (defaultSrc &amp;&amp; defaultSrc.indexOf(&quot;|&quot;) !== -1) {
-            retinaSrc = defaultSrc.split(&quot;|&quot;)[1];
-            defaultSrc = defaultSrc.split(&quot;|&quot;)[0];
-        }
+    // Do we have a retina source?
+    if (defaultSrc &amp;&amp; defaultSrc.indexOf(&quot;|&quot;) !== -1) {
+        retinaSrc = defaultSrc.split(&quot;|&quot;)[1];
+        defaultSrc = defaultSrc.split(&quot;|&quot;)[0];
+    }
 
-        // Change attribute on image
-        if (defaultSrc) {
-            targetSrc = (retina &amp;&amp; retinaSrc) ? retinaSrc : defaultSrc;
+    // Change attribute on image
+    if (defaultSrc) {
+        targetSrc = (retina &amp;&amp; retinaSrc) ? retinaSrc : defaultSrc;
 
-            if (debug) console.log('Unveiling image', {
-                attribute: attrib,
-                retina: retina,
-                defaultSrc: defaultSrc,
-                retinaSrc: retinaSrc,
-                targetSrc: targetSrc
-            });
+        if (debug) console.log('Unveiling image', {
+            attribute: attrib,
+            retina: retina,
+            defaultSrc: defaultSrc,
+            retinaSrc: retinaSrc,
+            targetSrc: targetSrc
+        });
+
+        // Change classes
+        classLoading($this);
+
+        // Set new source
+        $this.prop(&quot;src&quot;, targetSrc);
+
+        // When new source has loaded, do stuff
+        $this.one('load', function () {
 
             // Change classes
-            classLoading($this);
+            classLoaded($this);
 
-            // Set new source
-            $this.prop(&quot;src&quot;, targetSrc);
-
-            // When new source has loaded, do stuff
-            $this.one('load', function () {
-
-                // Change classes
-                classLoaded($this);
-
-                // Fire up the callback if it's a function
-                if (typeof opts.loaded === &quot;function&quot;) {
-                    opts.loaded.call(this);
-                }
-
-                // Loading the image may have modified page layout,
-                // so unveil again
-                unveil();
-            });
-
-            // If the image has instantly loaded, change classes now
-            if (this.complete) {
-                classLoaded($this);
+            // Fire up the callback if it's a function
+            if (typeof opts.loaded === &quot;function&quot;) {
+                opts.loaded.call(this);
             }
-        }
-    });
 
-    // -------------------------------
-    // Functions below
-    // -------------------------------</code></pre>
-          <section id="$this">
-            <h1>$this</h1>
+            // Loading the image may have modified page layout,
+            // so unveil again
+            lookup();
+        });
+
+        // If the image has instantly loaded, change classes now
+        if (this.complete) {
+            classLoaded($this);
+        }
+    }
+});</code></pre>
+          <div class="description"><h1>HELPER FUNCTIONS</h1>
+<hr>
+</div>
+          <section id="visible">
+            <h1>visible</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>$this</span><span>&nbsp;</span>
+              <div class="label label-info radius ctx-type">function</div><span>&nbsp;</span><span>visible()</span><span>&nbsp;</span>
             </p>
           </section>
           <table class="table table-bordered table-striped">
@@ -226,106 +224,207 @@
             </tbody>
           </table>
           <div class="description"><p>Zepto doesn&#39;t support the :visible and :hidden selector by default</p></div>
-          <pre><code class="language-javascript">var $this = $(this);
+          <pre><code class="language-javascript">function visible($elm) {
+    return !!($elm.width() || $elm.height()) &amp;&amp; $elm.css(&quot;display&quot;) !== &quot;none&quot;;
+}</code></pre>
+          <section id="classLoading">
+            <h1>classLoading</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>&nbsp;</span><span>classLoading()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$elm</td>
+                <td>object</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Sets the classes when an image is loading</p></div>
+          <pre><code class="language-javascript">function classLoading($elm) {
+    $elm.addClass(unveilString + '-loading');
+}</code></pre>
+          <section id="classLoaded">
+            <h1>classLoaded</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>&nbsp;</span><span>classLoaded()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$elm</td>
+                <td>object</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Sets the classes when an image is done loading</p></div>
+          <pre><code class="language-javascript">function classLoaded($elm) {
+    $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
+    $elm.addClass(unveilString + '-loaded');
+}</code></pre>
+          <section id="inview">
+            <h1>inview</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>&nbsp;</span><span>inview()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Filter function which returns true when a given image is in the viewport.</p></div>
+          <pre><code class="language-javascript">function inview() {
+    // jshint validthis: true
+    var $this = $(this);
 
-if (!visible($this)) {
-    return;
-}
-
-var viewportTop = $window.scrollTop(),
-    viewportEnd = viewportTop + height,
-    containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
-    elementTop = $this.offset().top + containerTop,
-    elementEnd = elementTop + $this.height();
-
-return elementEnd &gt;= viewportTop - offset &amp;&amp; elementTop &lt;= viewportEnd + offset;
-        }
-
-        function unveil() {
-if (debug) console.log('Unveiling');
-
-var batch = images.filter(inview);
-
-batch.trigger(unveilString);
-images = images.not(batch);
-
-if (batch.length) {
-    if (debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
-}
-        }
-
-        function resize() {
-height = $window.height();
-unveil();
-        }
-
-        function throttle(callback) {
-var wait = false;                  // Initially, we're not waiting
-return function () {               // We return a throttled function
-    if (!wait) {                   // If we're not waiting
-        wait = true;               // Prevent future invocations
-        setTimeout(function () {   // After a period of time
-            callback();            // Execute users function
-            wait = false;          // And allow future invocations
-        }, throttleTimeout);
+    if (!visible($this)) {
+        return;
     }
-};
+
+    var viewportTop = $window.scrollTop(),
+        viewportEnd = viewportTop + height,
+        containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
+        elementTop = $this.offset().top + containerTop,
+        elementEnd = elementTop + $this.height();
+
+    return elementEnd &gt;= viewportTop - offset &amp;&amp; elementTop &lt;= viewportEnd + offset;
+}</code></pre>
+          <section id="resize">
+            <h1>resize</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>&nbsp;</span><span>resize()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Sets the window height and calls the lookup function</p></div>
+          <pre><code class="language-javascript">function resize() {
+    height = $window.height();
+    lookup();
+}</code></pre>
+          <section id="throttle">
+            <h1>throttle</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>&nbsp;</span><span>throttle()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>callback</td>
+                <td>function</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Throttle function with function call in tail. Based on <a href="http://sampsonblog.com/749/simple-throttle-function">http://sampsonblog.com/749/simple-throttle-function</a></p></div>
+          <pre><code class="language-javascript">function throttle(callback) {
+    var wait = false;                  // Initially, we're not waiting
+    return function () {               // We return a throttled function
+        if (!wait) {                   // If we're not waiting
+            wait = true;               // Prevent future invocations
+            setTimeout(function () {   // After a period of time
+                callback();            // Execute users function
+                wait = false;          // And allow future invocations
+            }, throttleTimeout);
+        }
+    };
+}</code></pre>
+          <div class="description"><h1>LOOKUP FUNCTION</h1>
+<hr>
+</div>
+          <section id="lookup">
+            <h1>lookup</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>&nbsp;</span><span>lookup()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Function which filters images which are in view and triggers the unveil event on those images.</p></div>
+          <pre><code class="language-javascript">function lookup() {
+    if (debug) console.log('Unveiling');
+
+    var batch = images.filter(inview);
+
+    batch.trigger(unveilString);
+    images = images.not(batch);
+
+    if (batch.length) {
+        if (debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+    }
+}</code></pre>
+          <div class="description"><h1>BOOTSTRAPPING</h1>
+<hr>
+</div>
+          <div class="description"><p>Read and reset the src attribute, to prevent loading of original images</p></div>
+          <pre><code class="language-javascript">this.each(function () {
+    var $this = $(this),
+        elmPlaceholder = $this.data('src-placeholder') || placeholder;
+
+    // Add element to global array
+    images = $(images).add(this);
+
+    // If this element has been called before,
+    // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
+    if (!$this.data(unveilString)) {
+
+        // Set the unveil flag
+        $this.data(unveilString, true);
+
+        // Set data-src if not set
+        if (!$this.data('src')) {
+            $this.data('src', $this.prop('src'));
         }
 
-        // -------------------------------
-        // Bootstrapping below
-        // -------------------------------
-
-        // Read and reset the src attribute first, to prevent loading
-        // of original images
-        this.each(function () {
-var $this = $(this),
-    elmPlaceholder = $this.data('src-placeholder') || placeholder;
-
-// Add element to global array
-images = $(images).add(this);
-
-// If this element has been called before,
-// don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
-if (!$this.data(unveilString)) {
-
-    // Set the unveil flag
-    $this.data(unveilString, true);
-
-    // Set data-src if not set
-    if (!$this.data('src')) {
-        $this.data('src', $this.prop('src'));
+        // Set placeholder
+        $this
+            .one('load', function () {
+                $(this).addClass(unveilString + '-placeholder');
+                lookup();
+            })
+            .prop('src', '')
+            .prop('src', elmPlaceholder);
     }
-
-    // Set placeholder
-    $this
-        .one('load', function () {
-            $(this).addClass(unveilString + '-placeholder');
-            unveil();
-        })
-        .prop('src', '')
-        .prop('src', elmPlaceholder);
-}
-        });
-
-        if (debug) console.log('Images now in collection', images.length);
-
-        // Bind global listeners
-        if (!initialized) {
-$container.on({
-    'resize.unveil': throttle(resize),
-    'scroll.unveil': throttle(unveil),
-    'lookup.unveil': unveil
 });
-        }
 
-        // Wait a little bit for the placeholder to be set, so the src attribute
-        // is not empty (which will mark the image as hidden)
-        setTimeout(unveil, 0);
-
-        initialized = true;
-
-        return this;
+if (debug) console.log('Images now in collection', images.length);</code></pre>
+          <div class="description"><p>Bind global listeners</p></div>
+          <pre><code class="language-javascript">{if (!initialized) {
+    $container.on({
+        'resize.unveil': throttle(resize),
+        'scroll.unveil': throttle(lookup),
+        'lookup.unveil': lookup
+    });
+    initialized = true;
+}}</code></pre>
+          <div class="description"><p>Wait a little bit for the placeholder to be set, so the src attribute is not empty (which will mark the image as hidden)</p></div>
+          <pre><code class="language-javascript">{setTimeout(lookup, 0);}</code></pre>
+          <div class="description"><p>That&#39;s all folks!</p></div>
+          <pre><code class="language-javascript">return this;
 
     };
 
