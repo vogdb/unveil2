@@ -4,7 +4,7 @@
 
 # unveil2.js
 
-> __A very lightweight plugin to lazy load images for jQuery or Zepto.js__
+> __A very lightweight plugin to lazy load images for jQuery or Zepto.js__  
 > Based on [luis-almeida/unveil](https://github.com/luis-almeida/unveil).
 
 ## Getting started
