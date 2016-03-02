@@ -43,7 +43,7 @@
 
         $(image).unveil({
             loaded: function() {
-                assert.equal(image.css('backgroundImage'), imageUrl, 'DIV background-url should now be set');
+                assert.equal(image.css('backgroundImage'), 'url("' + imageUrl + '")', 'DIV background-url should now be set');
                 image.remove();
                 done();
             }
