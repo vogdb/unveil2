@@ -60,6 +60,7 @@ module.exports = function (grunt) {
         qunit: {
             default: {
                 options: {
+                    console: true,
                     urls: [
                         'http://localhost:8000/test/jquery.html',
                         'http://localhost:8000/test/zepto.html'
@@ -75,10 +76,19 @@ module.exports = function (grunt) {
          * @github.com/gruntjs/grunt-contrib-connect
          */
         connect: {
-            server: {
+            live: {
                 options: {
                     port: 8000,
-                    base: '.'
+                    base: '.',
+                    debug: true
+                }
+            },
+            test: {
+                options: {
+                    port: 8000,
+                    base: '.',
+                    keepalive: true,
+                    debug: true
                 }
             }
         }
@@ -92,7 +102,7 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('test', [
         'jshint',
-        'connect',
+        'connect:live',
         'qunit'
     ]);
 

@@ -25,6 +25,7 @@
             .appendTo('body');
 
         $(image).unveil({
+            debug: true,
             loaded: function() {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
                 image.remove();
@@ -35,15 +36,16 @@
 
     QUnit.test("Background image test", function (assert) {
         var done = assert.async(1);
-        var image = $('<div/>')
+        var header = $('<header/>')
             .addClass('lazy')
             .attr('data-src', imageUrl)
             .appendTo('body');
 
-        $(image).unveil({
+        $(header).unveil({
+            debug: true,
             loaded: function() {
-                assert.ok(image.css('backgroundImage').indexOf(imageUrl) > -1, 'DIV background-url should now be set');
-                image.remove();
+                assert.ok(header.css('backgroundImage').indexOf(imageUrl) > -1, 'DIV background-url should now be set');
+                header.remove();
                 done();
             }
         });

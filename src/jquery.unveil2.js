@@ -139,7 +139,7 @@
                 if (this.nodeName === 'IMG') {
                     $this.prop("src", targetSrc);
                 } else {
-                    $('<img/>').attr('src', targetSrc).load(function() {
+                    $('<img/>').attr('src', targetSrc).one('load', function() {
                         $(this).remove();
                         $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load');
                     });
