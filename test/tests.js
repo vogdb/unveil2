@@ -8,8 +8,7 @@
 
     QUnit.config.testTimeout = 10000;
 
-    var placeholderUrl = 'http://placehold.it/500x300/C8D3DC?text=placeholder',
-        imageUrl = 'http://loremflickr.com/100/100';
+    var imageUrl = 'lazy.jpg';
 
     QUnit.test("Basic test", function (assert) {
         // Some basic tests if initial behaviour is consistent
@@ -27,7 +26,7 @@
 
         $(image).unveil({
             loaded: function() {
-                assert.equal(image.prop('src'), imageUrl, 'Image source should now be set');
+                assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
                 image.remove();
                 done();
             }
@@ -43,7 +42,7 @@
 
         $(image).unveil({
             loaded: function() {
-                assert.equal(image.css('backgroundImage'), 'url("' + imageUrl + '")', 'DIV background-url should now be set');
+                assert.ok(image.css('backgroundImage').indexOf(imageUrl) > -1, 'DIV background-url should now be set');
                 image.remove();
                 done();
             }
