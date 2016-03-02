@@ -1,2 +1,2 @@
 #!/bin/sh
-git subtree push --prefix docs origin gh-pages
+git push origin develop:gh-pages --force

@@ -99,7 +99,7 @@ $('img').unveil({
 
 ## API
 
-See [API documentation](http://nabble.github.io/unveil2/api.html)
+See [API documentation](http://nabble.github.io/unveil2/docs/api.html)
 
 ## License
 
