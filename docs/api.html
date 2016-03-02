@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width">
+        <title>Unveil2.js</title>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet"/>
+        <style>
+            body {
+                padding-top: 70px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-light bg-faded navbar-fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">Unveil2.js</a>
+                <ul class="nav navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="simple.html">Simple</a>
+                            <a class="dropdown-item" href="background.html">CSS background</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="api.html">API</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <article class="container">
+            <h1>Options</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Type</th>
+                        <th>Default</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">offset</th>
+                        <td>int</td>
+                        <td>0</td>
+                        <td>Load images when user scrolls to ... pixels before image appears</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">throttle</th>
+                        <td>int</td>
+                        <td>250</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"></th>
+                        <td>int</td>
+                        <td></td>
+                        <td>Throttle amount of lookups while scrolling or resizing (once every ... ms)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">placeholder</th>
+                        <td>string</td>
+                        <td><a href="http://stackoverflow.com/a/13139830/938297">pixel</a></td>
+                        <td>Use this placeholder image. Can be a relative/absolute URL or data-URI. Defaults to a transparent pixel. Can also be set per-image by `data-src-placeholder` attribute.</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">loading</th>
+                        <td>function</td>
+                        <td>null</td>
+                        <td>Fire this function once a image starts loading</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">loaded</th>
+                        <td>function</td>
+                        <td>null</td>
+                        <td>Fire this function once a image has been loaded</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">breakpoints</th>
+                        <td>array</td>
+                        <td>[]</td>
+                        <td>Array of breakpoint objects containing a minimum width and a data attribute name (i.e. `{ minWidth: 768, attribute: 'data-src-md' }`. Use a custom data attribute for image source once a corresponding minimum window width has been exceeded.</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">debug</th>
+                        <td>bool</td>
+                        <td>false</td>
+                        <td>Prints debug messages to the console when true (doesn't work in minified version)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h1>Events</h1>
+
+            <h3>Trigger</h3>
+            <p>
+                You can still trigger image loading whenever you need. All you have to do is select the images you want to 'unveil' and trigger the event:<br/>
+                <code>
+                    $("img").trigger("unveil");
+                </code>
+            </p>
+
+            <h3>Lookup</h3>
+            <p>
+                It is also possible to lookup for images in the viewport that haven't been 'unveiled' yet. This can be useful, for instance, in case of a tabbed layout.<br/>
+                <code>
+                $(window).trigger("lookup");
+                </code>
+            </p>
+
+            <h3>Cancel</h3>
+            <p>
+                You can remove all the 'unveil' event handlers from 'window':<br/>
+                <code>
+                $(window).off("unveil");
+                </code>
+            </p>
+        </article>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
+    </body>
+</html>

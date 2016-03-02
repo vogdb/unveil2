@@ -26,9 +26,13 @@ __Note:__ If you load scripts at the bottom of the page, [you don't have to wait
 
 [That's all folks](https://www.youtube.com/watch?v=gBzJGckMYO4)!
 
+## Examples
+
+[See our online examples](http://nabble.github.io/unveil2/docs/index.html)
+
 ## More options
 
-For a complete list of options, see [API section](#api) below.
+For a complete list of options, see [API section](http://nabble.github.io/unveil2/docs/api.html).
 
 ### Retina images
 
@@ -47,6 +51,17 @@ To replace images with a placeholder once they're not yet loaded, use the `data-
 ```
 
 __Note:__ Don't replace the original image in the `src` attribute with a placeholder image, since this will potentially mess with bots, scrapers and JavaScript disabled browsers. Unveil2 will tell the browser to stop loading the original image so it won't slow down the loading of the page.
+
+### CSS background images
+
+Unveil2 can lazy laod CSS background images:
+
+```html
+<header data-src="bg.png|bg@2x.png" />
+<script>
+$('header').unveil();
+</script>
+```
 
 ### Breakpoints
 
@@ -99,42 +114,7 @@ $('img').unveil({
 
 ## API
 
-### Options
-
-| Option          | Type       | Default | Description |
-|-----------------|------------|---------|-------------|
-| **offset**      | _int_      | 0       | Load images when user scrolls to ... pixels before image appears
-| **throttle**    | _int_      | 250     | Throttle amount of lookups while scrolling or resizing (once every ... ms)
-| **placeholder** | _string_   | [pixel](http://stackoverflow.com/a/13139830/938297) | Use this placeholder image. Can be a relative/absolute URL or data-URI. Defaults to a transparent pixel. Can also be set per-image by `data-src-placeholder` attribute.
-| **loaded**      | _function_ | null    | Fire this function once a image has been loaded
-| **breakpoints** | _array_    | []      | Array of breakpoint objects containing a minimum width and a data attribute name (i.e. `{ minWidth: 768, attribute: 'data-src-md' }`. Use a custom data attribute for image source once a corresponding minimum window width has been exceeded.
-| **debug**       | _bool_     | false   | Prints debug messages to the console when true (doesn't work in minified version)
-
-### Events
-
-#### Trigger
-
-You can still trigger image loading whenever you need. All you have to do is select the images you want to 'unveil' and trigger the event:
-
-```js
-$("img").trigger("unveil");
-```
-
-#### Lookup
-
-It is also possible to lookup for images in the viewport that haven't been 'unveiled' yet. This can be useful, for instance, in case of a tabbed layout.
-
-```js
-$(window).trigger("lookup");
-```
-
-#### Cancel
-
-You can remove all the 'unveil' event handlers from 'window':
-
-```js
-$(window).off("unveil");
-```
+See [API documentation](http://nabble.github.io/unveil2/docs/api.html)
 
 ## License
 

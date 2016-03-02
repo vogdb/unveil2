@@ -18,19 +18,18 @@
 
     /**
      * Store the string 'unveil' in a variable to save some bytes
-     *
      */
-    var unveilString = 'unveil';
+    var unveilString = 'unveil',
 
     /**
      * A jQuery/Zepto collection of images which will be lazy loaded
      */
-    var images = $();
+        images = $(),
 
     /**
      * A flag to set initialized state, so we can set global listeners only once
      */
-    var initialized = false;
+        initialized = false;
 
     /**
      * # PLUGIN
@@ -38,32 +37,35 @@
      */
 
     /**
-     * @param {object} opts An object of options, see API section in README
+     * @param {object} options An object of options, see API section in README
      * @returns {$}
      */
-    $.fn.unveil = function (opts) {
+    $.fn.unveil = function (options) {
 
-        opts = opts || {};
+        options = options || {};
 
         // Initialize variables
         var $window = $(window),
             height = $window.height(),
-            retina = window.devicePixelRatio > 1;
+            retina = window.devicePixelRatio > 1,
+            defaults = {
+                container: $window,
+                placeholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                offset: 0,
+                breakpoints: [],
+                throttleTimeout: 250,
+                debug: false,
+                loading: null,
+                loaded: null
+            },
+            settings = $.extend(true, {}, defaults, options);
 
-        // Initialize defaults
-        var $container = opts.container || $window,
-            placeholder = opts.placeholder || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-            offset = opts.offset || 0,
-            breakpoints = opts.breakpoints || [],
-            throttleTimeout = opts.throttle || 250,
-            debug = opts.debug || false;
-
-        if (debug) console.log('Called unveil on', this.length, 'elements with the following options:', opts);
+        if (settings.debug) console.log('Called unveil on', this.length, 'elements with the following options:', settings);
 
         /**
          * Sort sizes array, arrange highest minWidth to front of array
          */
-        breakpoints.sort(function (a, b) {
+        settings.breakpoints.sort(function (a, b) {
             return b.minWidth - a.minWidth;
         });
 
@@ -80,9 +82,9 @@
                 attrib = 'src', targetSrc, defaultSrc, retinaSrc;
 
             // Determine attribute to extract source from
-            for (i = 0; i < breakpoints.length; i++) {
-                var dataAttrib = breakpoints[i].attribute.replace(/^data-/, '');
-                if (windowWidth >= breakpoints[i].minWidth && $this.data(dataAttrib)) {
+            for (i = 0; i < settings.breakpoints.length; i++) {
+                var dataAttrib = settings.breakpoints[i].attribute.replace(/^data-/, '');
+                if (windowWidth >= settings.breakpoints[i].minWidth && $this.data(dataAttrib)) {
                     attrib = dataAttrib;
                     break;
                 }
@@ -101,7 +103,7 @@
             if (defaultSrc) {
                 targetSrc = (retina && retinaSrc) ? retinaSrc : defaultSrc;
 
-                if (debug) console.log('Unveiling image', {
+                if (settings.debug) console.log('Unveiling image', {
                     attribute: attrib,
                     retina: retina,
                     defaultSrc: defaultSrc,
@@ -112,8 +114,10 @@
                 // Change classes
                 classLoading($this);
 
-                // Set new source
-                $this.prop("src", targetSrc);
+                // Fire up the callback if it's a function
+                if (typeof settings.loading === 'function') {
+                    settings.loading.call(this);
+                }
 
                 // When new source has loaded, do stuff
                 $this.one('load', function () {
@@ -122,14 +126,24 @@
                     classLoaded($this);
 
                     // Fire up the callback if it's a function
-                    if (typeof opts.loaded === "function") {
-                        opts.loaded.call(this);
+                    if (typeof settings.loaded === 'function') {
+                        settings.loaded.call(this);
                     }
 
                     // Loading the image may have modified page layout,
                     // so unveil again
                     lookup();
                 });
+
+                // Set new source
+                if (this.nodeName === 'IMG') {
+                    $this.prop("src", targetSrc);
+                } else {
+                    $('<img/>').attr('src', targetSrc).load(function() {
+                        $(this).remove();
+                        $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load');
+                    });
+                }
 
                 // If the image has instantly loaded, change classes now
                 if (this.complete) {
@@ -187,11 +201,11 @@
 
             var viewportTop = $window.scrollTop(),
                 viewportEnd = viewportTop + height,
-                containerTop = $container !== $window ? viewportTop - $container.offset().top : 0,
+                containerTop = settings.container[0] !== $window[0] ? viewportTop - settings.container.offset().top : 0,
                 elementTop = $this.offset().top + containerTop,
                 elementEnd = elementTop + $this.height();
 
-            return elementEnd >= viewportTop - offset && elementTop <= viewportEnd + offset;
+            return elementEnd >= viewportTop - settings.offset && elementTop <= viewportEnd + settings.offset;
         }
 
         /**
@@ -216,7 +230,7 @@
                     setTimeout(function () {   // After a period of time
                         callback();            // Execute users function
                         wait = false;          // And allow future invocations
-                    }, throttleTimeout);
+                    }, settings.throttleTimeout);
                 }
             };
         }
@@ -230,7 +244,7 @@
          * Function which filters images which are in view and triggers the unveil event on those images.
          */
         function lookup() {
-            if (debug) console.log('Unveiling');
+            if (settings.debug) console.log('Unveiling');
 
             var batch = images.filter(inview);
 
@@ -238,7 +252,7 @@
             images = images.not(batch);
 
             if (batch.length) {
-                if (debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+                if (settings.debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
             }
         }
 
@@ -252,7 +266,7 @@
          */
         this.each(function () {
             var $this = $(this),
-                elmPlaceholder = $this.data('src-placeholder') || placeholder;
+                elmPlaceholder = $this.data('src-placeholder') || settings.placeholder;
 
             // Add element to global array
             images = $(images).add(this);
@@ -280,13 +294,13 @@
             }
         });
 
-        if (debug) console.log('Images now in collection', images.length);
+        if (settings.debug) console.log('Images now in collection', images.length);
 
         /**
          * Bind global listeners
          */
         {if (!initialized) {
-            $container.on({
+            settings.container.on({
                 'resize.unveil': throttle(resize),
                 'scroll.unveil': throttle(lookup),
                 'lookup.unveil': lookup

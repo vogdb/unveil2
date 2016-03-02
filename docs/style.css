@@ -1,0 +1,63 @@
+body {
+    padding-top: 70px;
+}
+
+aside {
+    width: 200px;
+    margin-top: 10px;
+    background-color: white;
+}
+
+.progress {
+    margin-bottom: 0;
+}
+
+img.lazy {
+    width: 40%;
+    min-height: 200px;
+    margin: 2rem;
+}
+img.lazy.unveil-loaded {
+    min-height: inherit;
+}
+
+header.lazy {
+    position: relative;
+    background-size: cover;
+    background-position: 50% 50%;
+}
+header.lazy:before {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255,255,255,0.5);
+}
+header.lazy * {
+    position: relative;
+}
+
+.lazy.unveil-placeholder {
+    outline: 10px solid steelblue;
+}
+.lazy.unveil-loading {
+    animation: pulsar 1s linear infinite alternate;
+}
+.lazy.unveil-loaded {
+    outline: 10px solid mediumseagreen;
+}
+
+section.grid img.lazy {
+    width: 85%;
+}
+
+@keyframes pulsar {
+    from {
+        outline: 10px solid steelblue;
+    }
+    to {
+        outline: 0 solid steelblue;
+    }
+}

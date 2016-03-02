@@ -10,5 +10,7 @@ ratings:
   - "**.jsx"
 exclude_paths:
 - test/**/*
+- dist/**/*
+- docs/**/*
 - "gruntfile.js"
 - "**.min.js"
