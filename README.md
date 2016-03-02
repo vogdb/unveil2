@@ -26,6 +26,10 @@ __Note:__ If you load scripts at the bottom of the page, [you don't have to wait
 
 [That's all folks](https://www.youtube.com/watch?v=gBzJGckMYO4)!
 
+## Examples
+
+[See our online examples](http://nabble.github.io/unveil2/docs/index.html)
+
 ## More options
 
 For a complete list of options, see [API section](http://nabble.github.io/unveil2/docs/api.html).
