@@ -115,12 +115,9 @@
                 classLoading($this);
 
                 // Fire up the callback if it's a function
-                if (typeof settings.loading === "function") {
+                if (typeof settings.loading === 'function') {
                     settings.loading.call(this);
                 }
-
-                // Set new source
-                $this.prop("src", targetSrc);
 
                 // When new source has loaded, do stuff
                 $this.one('load', function () {
@@ -129,7 +126,7 @@
                     classLoaded($this);
 
                     // Fire up the callback if it's a function
-                    if (typeof settings.loaded === "function") {
+                    if (typeof settings.loaded === 'function') {
                         settings.loaded.call(this);
                     }
 
@@ -137,6 +134,16 @@
                     // so unveil again
                     lookup();
                 });
+
+                // Set new source
+                if (this.nodeName === 'IMG') {
+                    $this.prop("src", targetSrc);
+                } else {
+                    $('<img/>').attr('src', targetSrc).load(function() {
+                        $(this).remove();
+                        $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load');
+                    });
+                }
 
                 // If the image has instantly loaded, change classes now
                 if (this.complete) {

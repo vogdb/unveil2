@@ -28,7 +28,7 @@ __Note:__ If you load scripts at the bottom of the page, [you don't have to wait
 
 ## More options
 
-For a complete list of options, see [API section](#api) below.
+For a complete list of options, see [API section](http://nabble.github.io/unveil2/docs/api.html).
 
 ### Retina images
 
@@ -47,6 +47,17 @@ To replace images with a placeholder once they're not yet loaded, use the `data-
 ```
 
 __Note:__ Don't replace the original image in the `src` attribute with a placeholder image, since this will potentially mess with bots, scrapers and JavaScript disabled browsers. Unveil2 will tell the browser to stop loading the original image so it won't slow down the loading of the page.
+
+### CSS background images
+
+Unveil2 can lazy laod CSS background images:
+
+```html
+<header data-src="bg.png|bg@2x.png" />
+<script>
+$('header').unveil();
+</script>
+```
 
 ### Breakpoints
 

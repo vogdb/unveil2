@@ -6,49 +6,7 @@
         <meta name="viewport" content="width=device-width">
         <title>Unveil2.js</title>
         <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet"/>
-        <style>
-            body {
-                padding-top: 70px;
-            }
-            aside {
-                position: fixed;
-                top: 50px;
-                right: 0;
-                z-index: 1;
-                background-color: steelblue;
-                color: white;
-                padding: 5px 20px;
-            }
-            aside span {
-                font-weight:bold;
-            }
-            img.lazy {
-                width: 40%;
-                min-height: 200px;
-                margin: 2rem;
-            }
-            img.lazy.unveil-placeholder {
-                outline: 10px solid steelblue;
-            }
-            img.lazy.unveil-loading {
-                animation: pulsar 1s linear infinite alternate;
-            }
-            img.lazy.unveil-loaded {
-                outline: 10px solid mediumseagreen;
-                min-height: inherit;
-            }
-            section.grid img.lazy {
-                width: 85%;
-            }
-            @keyframes pulsar {
-                from {
-                    outline: 10px solid steelblue;
-                }
-                to {
-                    outline: 0 solid steelblue;
-                }
-            }
-        </style>
+        <link href="style.css" rel="stylesheet"/>
     </head>
     <body>
         <nav class="navbar navbar-light bg-faded navbar-fixed-top">
@@ -66,11 +24,11 @@
                         <a class="nav-link" href="api.html">API</a>
                     </li>
                 </ul>
+                <aside class="pull-xs-right">
+                    <progress id="progress" class="progress progress-success" value="0" max="100"></progress>
+                </aside>
             </div>
         </nav>
-        <aside>
-            <span id="loading">0</span>/<span id="loaded">0</span> images loading/loaded
-        </aside>
         <article class="container">
             <section>
                 <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h1>
@@ -183,31 +141,8 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
         <script src="../src/jquery.unveil2.js"></script>
         <script>
-            var loaded = 0;
-            var loading = 0;
-            $("img.lazy").unveil({
-                offset: 100,
-                loading: function () {
-                    loading++;
-                    $('#loading').text(loading);
-                },
-                loaded: function () {
-                    loaded++;
-                    $('#loaded').text(loaded);
-                },
-                placeholder: 'http://placehold.it/500x300/C8D3DC?text=placeholder',
-                throttle: 200,
-                breakpoints: [
-                    {
-                        minWidth: 375,
-                        attribute: 'data-src'
-                    },
-                    {
-                        minWidth: 768,
-                        attribute: 'data-src-lg'
-                    }
-                ]
-            });
+            var selector = 'img.lazy';
         </script>
+        <script src="script.js"></script>
     </body>
 </html>

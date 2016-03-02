@@ -6,73 +6,31 @@
         <meta name="viewport" content="width=device-width">
         <title>Unveil2.js</title>
         <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet"/>
-        <style>
-            body {
-                padding-top: 70px;
-            }
-            aside {
-                position: fixed;
-                top: 50px;
-                right: 0;
-                z-index: 1;
-                background-color: steelblue;
-                color: white;
-                padding: 5px 20px;
-            }
-            aside span {
-                font-weight:bold;
-            }
-            img.lazy {
-                width: 40%;
-                min-height: 200px;
-                margin: 2rem;
-            }
-            img.lazy.unveil-placeholder {
-                outline: 10px solid steelblue;
-            }
-            img.lazy.unveil-loading {
-                animation: pulsar 1s linear infinite alternate;
-            }
-            img.lazy.unveil-loaded {
-                outline: 10px solid mediumseagreen;
-                min-height: inherit;
-            }
-            section.grid img.lazy {
-                width: 85%;
-            }
-            @keyframes pulsar {
-                from {
-                    outline: 10px solid steelblue;
-                }
-                to {
-                    outline: 0 solid steelblue;
-                }
-            }
-        </style>
+        <link href="style.css" rel="stylesheet"/>
     </head>
     <body>
-        <nav class="navbar navbar-light bg-faded navbar-fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="index.html">Unveil2.js</a>
-                <ul class="nav navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link active dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="simple.html">Simple</a>
-                            <a class="dropdown-item active" href="background.html">CSS background</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="api.html">API</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <aside>
-            <span id="loading">0</span>/<span id="loaded">0</span> images loading/loaded
-        </aside>
+    <nav class="navbar navbar-light bg-faded navbar-fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Unveil2.js</a>
+            <ul class="nav navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="simple.html">Simple</a>
+                        <a class="dropdown-item active" href="background.html">CSS background</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="api.html">API</a>
+                </li>
+            </ul>
+            <aside class="pull-xs-right">
+                <progress id="progress" class="progress progress-success" value="0" max="100"></progress>
+            </aside>
+        </div>
+    </nav>
         <article class="container">
-            <header class="jumbotron" data-src="http://loremflickr.com/200/150?r=1|http://loremflickr.com/400/300?r=1"
+            <header class="lazy jumbotron" data-src="http://loremflickr.com/200/150?r=1|http://loremflickr.com/400/300?r=1"
                     data-src-lg="http://loremflickr.com/400/300?r=1|http://loremflickr.com/800/600?r=1">
                 <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h1>
                 <h3>A nice jumbotron with a background image</h3>
@@ -95,8 +53,55 @@
                 </p>
             </section>
 
-            <header class="jumbotron" data-src="http://loremflickr.com/200/150?r=2|http://loremflickr.com/400/300?r=2"
+            <header class="lazy jumbotron" data-src="http://loremflickr.com/200/150?r=2|http://loremflickr.com/400/300?r=2"
                     data-src-lg="http://loremflickr.com/400/300?r=2|http://loremflickr.com/800/600?r=2">
+                <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h1>
+                <h3>A nice jumbotron with a background image</h3>
+            </header>
+            <section>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ut tempus ligula, dapibus tempus quam. Sed dignissim convallis quam a molestie. Ut sagittis justo pellentesque elit tincidunt, a lobortis magna ultricies. Sed consequat libero quis efficitur pharetra. Donec ut pharetra odio, consequat ultricies leo. Curabitur semper a nibh eget tincidunt. Vivamus dui velit, consectetur et venenatis et, ultricies sit amet enim. In est nunc, ultricies rhoncus venenatis id, convallis et quam. Nam molestie tellus ac turpis varius, quis sollicitudin neque tristique. Fusce luctus, justo ut egestas porta, eros risus consequat diam, sit amet consectetur neque nisl vitae magna. In vestibulum, neque eget aliquet venenatis, ex diam pharetra sapien, sed imperdiet nibh dui et orci. Cras vel nisi mauris. Ut efficitur nisl urna, non tempus urna posuere et.
+                </p>
+                <p>
+                    Aenean imperdiet velit nec felis consectetur bibendum. Curabitur pretium ut orci ut pharetra. Fusce id diam id leo scelerisque blandit. Nunc vel purus ac risus volutpat egestas. Cras commodo condimentum velit sed tristique. Nunc sollicitudin nisl ex, eu elementum nibh molestie quis. Nulla vitae dapibus nisi. Praesent euismod consequat felis eu tincidunt. Nam eget justo non nulla mattis tristique. Nunc non diam sit amet nisi porta porta non eu lacus. Curabitur massa sapien, sagittis ac varius non, eleifend egestas lorem. In erat neque, aliquet non aliquam vitae, auctor ut ex. Suspendisse potenti. Donec scelerisque auctor est sed convallis. Phasellus congue nisi nec ante commodo, eget imperdiet urna maximus.
+                </p>
+
+                <h2>Pellentesque quis mauris a augue commodo scelerisque.</h2>
+                <p>
+                    Pellentesque quis mauris a augue commodo scelerisque. Aenean venenatis ante eu mi elementum feugiat. Sed ipsum massa, rutrum et fringilla sit amet, aliquam eu erat. Sed pretium eget lorem eget rhoncus. Vestibulum rhoncus, elit sit amet congue hendrerit, elit mi feugiat ex, et lobortis risus justo vitae purus. In fringilla nibh justo, ac posuere lectus maximus porta. Donec in eros nec orci varius interdum a tincidunt leo. Integer consequat elit vel arcu pretium, ut lacinia neque sagittis. Etiam ut nibh ut odio tempor pretium at consectetur ligula. Etiam a velit velit.
+                </p>
+                <p>
+                    Fusce sit amet condimentum orci. Nullam nisi ante, mattis sed mi ultrices, varius viverra elit. Pellentesque feugiat tortor vitae imperdiet iaculis. Ut at neque sed quam sodales varius. Etiam ac dui odio. Phasellus gravida augue vitae ligula dignissim, et congue sapien sagittis. Vestibulum eu pellentesque nibh. Proin iaculis dolor id ante congue, tincidunt commodo magna varius. Proin dictum suscipit auctor. Aenean dignissim condimentum feugiat. Maecenas vel pretium lorem. Nullam odio felis, ultrices feugiat porta eget, laoreet sed justo. Maecenas purus ante, vestibulum quis sem mattis, bibendum imperdiet augue. Nam ut finibus mauris, eget molestie tortor. Integer fermentum sit amet tellus ut pellentesque. Nam blandit lectus vel ante blandit mollis.
+                </p>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ut tempus ligula, dapibus tempus quam. Sed dignissim convallis quam a molestie. Ut sagittis justo pellentesque elit tincidunt, a lobortis magna ultricies. Sed consequat libero quis efficitur pharetra. Donec ut pharetra odio, consequat ultricies leo. Curabitur semper a nibh eget tincidunt. Vivamus dui velit, consectetur et venenatis et, ultricies sit amet enim. In est nunc, ultricies rhoncus venenatis id, convallis et quam. Nam molestie tellus ac turpis varius, quis sollicitudin neque tristique. Fusce luctus, justo ut egestas porta, eros risus consequat diam, sit amet consectetur neque nisl vitae magna. In vestibulum, neque eget aliquet venenatis, ex diam pharetra sapien, sed imperdiet nibh dui et orci. Cras vel nisi mauris. Ut efficitur nisl urna, non tempus urna posuere et.
+                </p>
+
+                <h2>Pellentesque quis mauris a augue commodo scelerisque.</h2>
+                <p>
+                    Pellentesque quis mauris a augue commodo scelerisque. Aenean venenatis ante eu mi elementum feugiat. Sed ipsum massa, rutrum et fringilla sit amet, aliquam eu erat. Sed pretium eget lorem eget rhoncus. Vestibulum rhoncus, elit sit amet congue hendrerit, elit mi feugiat ex, et lobortis risus justo vitae purus. In fringilla nibh justo, ac posuere lectus maximus porta. Donec in eros nec orci varius interdum a tincidunt leo. Integer consequat elit vel arcu pretium, ut lacinia neque sagittis. Etiam ut nibh ut odio tempor pretium at consectetur ligula. Etiam a velit velit.
+                </p>
+                <p>
+                    Fusce sit amet condimentum orci. Nullam nisi ante, mattis sed mi ultrices, varius viverra elit. Pellentesque feugiat tortor vitae imperdiet iaculis. Ut at neque sed quam sodales varius. Etiam ac dui odio. Phasellus gravida augue vitae ligula dignissim, et congue sapien sagittis. Vestibulum eu pellentesque nibh. Proin iaculis dolor id ante congue, tincidunt commodo magna varius. Proin dictum suscipit auctor. Aenean dignissim condimentum feugiat. Maecenas vel pretium lorem. Nullam odio felis, ultrices feugiat porta eget, laoreet sed justo. Maecenas purus ante, vestibulum quis sem mattis, bibendum imperdiet augue. Nam ut finibus mauris, eget molestie tortor. Integer fermentum sit amet tellus ut pellentesque. Nam blandit lectus vel ante blandit mollis.
+                </p>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ut tempus ligula, dapibus tempus quam. Sed dignissim convallis quam a molestie. Ut sagittis justo pellentesque elit tincidunt, a lobortis magna ultricies. Sed consequat libero quis efficitur pharetra. Donec ut pharetra odio, consequat ultricies leo. Curabitur semper a nibh eget tincidunt. Vivamus dui velit, consectetur et venenatis et, ultricies sit amet enim. In est nunc, ultricies rhoncus venenatis id, convallis et quam. Nam molestie tellus ac turpis varius, quis sollicitudin neque tristique. Fusce luctus, justo ut egestas porta, eros risus consequat diam, sit amet consectetur neque nisl vitae magna. In vestibulum, neque eget aliquet venenatis, ex diam pharetra sapien, sed imperdiet nibh dui et orci. Cras vel nisi mauris. Ut efficitur nisl urna, non tempus urna posuere et.
+                </p>
+
+                <h2>Pellentesque quis mauris a augue commodo scelerisque.</h2>
+                <p>
+                    Pellentesque quis mauris a augue commodo scelerisque. Aenean venenatis ante eu mi elementum feugiat. Sed ipsum massa, rutrum et fringilla sit amet, aliquam eu erat. Sed pretium eget lorem eget rhoncus. Vestibulum rhoncus, elit sit amet congue hendrerit, elit mi feugiat ex, et lobortis risus justo vitae purus. In fringilla nibh justo, ac posuere lectus maximus porta. Donec in eros nec orci varius interdum a tincidunt leo. Integer consequat elit vel arcu pretium, ut lacinia neque sagittis. Etiam ut nibh ut odio tempor pretium at consectetur ligula. Etiam a velit velit.
+                </p>
+                <p>
+                    Fusce sit amet condimentum orci. Nullam nisi ante, mattis sed mi ultrices, varius viverra elit. Pellentesque feugiat tortor vitae imperdiet iaculis. Ut at neque sed quam sodales varius. Etiam ac dui odio. Phasellus gravida augue vitae ligula dignissim, et congue sapien sagittis. Vestibulum eu pellentesque nibh. Proin iaculis dolor id ante congue, tincidunt commodo magna varius. Proin dictum suscipit auctor. Aenean dignissim condimentum feugiat. Maecenas vel pretium lorem. Nullam odio felis, ultrices feugiat porta eget, laoreet sed justo. Maecenas purus ante, vestibulum quis sem mattis, bibendum imperdiet augue. Nam ut finibus mauris, eget molestie tortor. Integer fermentum sit amet tellus ut pellentesque. Nam blandit lectus vel ante blandit mollis.
+                </p>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ut tempus ligula, dapibus tempus quam. Sed dignissim convallis quam a molestie. Ut sagittis justo pellentesque elit tincidunt, a lobortis magna ultricies. Sed consequat libero quis efficitur pharetra. Donec ut pharetra odio, consequat ultricies leo. Curabitur semper a nibh eget tincidunt. Vivamus dui velit, consectetur et venenatis et, ultricies sit amet enim. In est nunc, ultricies rhoncus venenatis id, convallis et quam. Nam molestie tellus ac turpis varius, quis sollicitudin neque tristique. Fusce luctus, justo ut egestas porta, eros risus consequat diam, sit amet consectetur neque nisl vitae magna. In vestibulum, neque eget aliquet venenatis, ex diam pharetra sapien, sed imperdiet nibh dui et orci. Cras vel nisi mauris. Ut efficitur nisl urna, non tempus urna posuere et.
+                </p>
+            </section>
+
+            <header class="lazy jumbotron" data-src="http://loremflickr.com/200/150?r=3|http://loremflickr.com/400/300?r=3"
+                    data-src-lg="http://loremflickr.com/400/300?r=3|http://loremflickr.com/800/600?r=3">
                 <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h1>
                 <h3>A nice jumbotron with a background image</h3>
             </header>
@@ -146,31 +151,8 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
         <script src="../src/jquery.unveil2.js"></script>
         <script>
-            var loaded = 0;
-            var loading = 0;
-            $("img.lazy").unveil({
-                offset: 100,
-                loading: function () {
-                    loading++;
-                    $('#loading').text(loading);
-                },
-                loaded: function () {
-                    loaded++;
-                    $('#loaded').text(loaded);
-                },
-                placeholder: 'http://placehold.it/500x300/C8D3DC?text=placeholder',
-                throttle: 200,
-                breakpoints: [
-                    {
-                        minWidth: 375,
-                        attribute: 'data-src'
-                    },
-                    {
-                        minWidth: 768,
-                        attribute: 'data-src-lg'
-                    }
-                ]
-            });
+            var selector = 'header.lazy';
         </script>
+        <script src="script.js"></script>
     </body>
 </html>
