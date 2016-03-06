@@ -1,5 +1,33 @@
 module.exports = function (grunt) {
 
+    var browsers = [
+        {
+            platform: 'Windows 10',
+            browserName: 'firefox',
+            version: '44'
+        },
+        {
+            platform: 'Windows 10',
+            browserName: 'chrome',
+            version: '48'
+        },
+        {
+            platform: 'Windows 10',
+            browserName: 'internet explorer',
+            version: '11'
+        },
+        {
+            platform: 'Windows 10',
+            browserName: 'microsoftedge',
+            version: '20'
+        },
+        {
+            platform: 'OS X 10.11',
+            browserName: 'safari',
+            version: '9'
+        }
+    ];
+
     /**
      * Initialize grunt.
      */
@@ -68,8 +96,7 @@ module.exports = function (grunt) {
                     },
                     console: true,
                     urls: [
-                        'http://localhost:8000/test/jquery.html',
-                        'http://localhost:8000/test/zepto.html'
+                        'http://localhost:8000/test/tests.html'
                     ]
                 }
             }
@@ -96,7 +123,23 @@ module.exports = function (grunt) {
                     debug: true
                 }
             }
+        },
+
+        'saucelabs-qunit': {
+            all: {
+                options: {
+                    urls: [
+                        'http://localhost:8000/test/tests.html'
+                    ],
+                    tunnelTimeout: 5,
+                    build: process.env.TRAVIS_JOB_ID,
+                    concurrency: 3,
+                    testname: "qunit for unveil2",
+                    browsers: browsers
+                }
+            }
         }
+
     });
 
 
@@ -108,7 +151,8 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'jshint',
         'connect:live',
-        'qunit'
+        'qunit',
+        'saucelabs-qunit'
     ]);
 
 
@@ -130,4 +174,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-saucelabs');
 };
