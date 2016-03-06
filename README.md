@@ -5,12 +5,12 @@
 
 # unveil2.js
 
-> __A very lightweight plugin to lazy load images for jQuery or Zepto.js__  
+> __A very lightweight plugin to lazy load images for jQuery__  
 > Based on [luis-almeida/unveil](https://github.com/luis-almeida/unveil).
 
 ## Getting started
 
-Install unveil2.js by downloading a copy of [`jquery.unveil2.min.js`](https://raw.githubusercontent.com/nabble/unveil2/develop/dist/jquery.unveil2.min.js) and add it to your page after [jQuery](http://jquery.com) or [Zepto](http://zeptojs.com):
+Install unveil2.js by downloading a copy of [`jquery.unveil2.min.js`](https://raw.githubusercontent.com/nabble/unveil2/develop/dist/jquery.unveil2.min.js) and add it to your page after [jQuery](http://jquery.com):
 
 ```html
 <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>

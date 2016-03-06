@@ -1,6 +1,6 @@
 /**
  * Unveil2.js
- * A very lightweight jQuery/Zepto plugin to lazy load images
+ * A very lightweight jQuery plugin to lazy load images
  * Based on https://github.com/luis-almeida/unveil
  *
  * Licensed under the MIT license.
@@ -27,7 +27,7 @@
         srcString = 'src',
 
     /**
-     * A jQuery/Zepto collection of images which will be lazy loaded
+     * A jQuery collection of images which will be lazy loaded
      */
         images = $(),
 
@@ -166,16 +166,6 @@
          */
 
         /**
-         * Zepto doesn't support the :visible and :hidden selector by default
-         *
-         * @param {object} $elm
-         * @returns {boolean}
-         */
-        function visible($elm) {
-            return !!($elm.width() || $elm.height()) && $elm.css("display") !== "none";
-        }
-
-        /**
          * Sets the classes when an image is loading
          *
          * @param {object} $elm
@@ -203,7 +193,7 @@
             // jshint validthis: true
             var $this = $(this);
 
-            if (!visible($this)) {
+            if ($this.is(':hidden')) {
                 return;
             }
 
@@ -328,4 +318,4 @@
 
     };
 
-})(window.jQuery || window.Zepto);
+})(window.jQuery);
