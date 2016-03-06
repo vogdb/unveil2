@@ -2,7 +2,7 @@
   "name": "unveil2",
   "title": "unveil2.js",
   "version": "2.0.2",
-  "homepage": "https://github.com/nabble/unveil2",
+  "homepage": "https://nabble.github.io/unveil2/",
   "description": "unveil2.js is a lazy load library",
   "license": "MIT",
   "author": {
@@ -17,7 +17,7 @@
     "url": "https://github.com/nabble/unveil2/issues"
   },
   "keywords": [
-    "lazy load"
+    "jquery lazy load"
   ],
   "devDependencies": {
     "grunt": "0.4.5",

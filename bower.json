@@ -1,0 +1,23 @@
+{
+  "name": "unveil2",
+  "description": "unveil2.js is a lazy load library",
+  "main": "src/jquery.unveil2.js",
+  "authors": [
+    "Joram van den Boezem"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "lazy",
+    "load",
+    "jquery"
+  ],
+  "homepage": "https://nabble.github.io/unveil2/",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

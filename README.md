@@ -28,11 +28,11 @@ __Note:__ If you load scripts at the bottom of the page, [you don't have to wait
 
 ## More examples
 
-CSS background, retina images, breakpoints and more: [see our online examples](http://nabble.github.io/unveil2/docs/index.html).
+CSS background, retina images, breakpoints and more: [see our online examples](https://nabble.github.io/unveil2/docs/index.html).
 
 ## More configuration options
 
-For a complete list of options, see [API section](http://nabble.github.io/unveil2/docs/api.html).
+For a complete list of options, see [API section](https://nabble.github.io/unveil2/docs/api.html).
 
 ## License
 
