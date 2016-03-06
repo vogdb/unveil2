@@ -35,6 +35,10 @@ CSS background, retina images, breakpoints and more: [see our online examples](h
 
 For a complete list of options, see [API section](https://nabble.github.io/unveil2/docs/api.html).
 
+## Cross-browser tests
+
+[![Sauce Labs](https://saucelabs.com/browser-matrix/joram.svg)](https://saucelabs.com/u/joram)
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
