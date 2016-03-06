@@ -8,7 +8,4 @@ node_js:
 before_install: npm install -g grunt-cli
 install: npm install
 addons:
-  sauce_connect:
-    username: "unveil"
-    access_key:
-      secure: "RMDdBGnwTAsG6WEaKsV/P6kNuF2Qdueze5UWHekN6SZvhi4as0ldCYDSvcUHd/BYe8ShZC0z2enXRxbcPzaF5AMIMSLq6XMjClsgbxUYFezUp7rPM9H+ZOibFjS5ryaMrhxjBeACvwbzxmktAuZSAVnWgbYiVy+UMQwrjG/7LL9LvHOH8byeSHTA7/Apivl7laOa8mZSbVjm4RD0pRfakvYZoKcKhMHTHmM4Fu2JvV4ttuqTyafcXGr7tmVGEsQ5oUWgeBtqFVc/aSa9l17gMt0caQLuWu/pQywNz3wJphV56CUsk/Lvf++ow8FiYrqdvrG8sT4lPDNQwGD14/OTRA8f2YAvVxpEim7eLToXrCrCCv1OF6dJvULDYJYlBjRXr8uGMD82hbSYDV8bZ6M26k3kazc6u605p09SANoeQ12/eXDq9nSCjSytcTF6mxePoDeK/bmFtJcd8sPT+7"
+  - sauce_connect
