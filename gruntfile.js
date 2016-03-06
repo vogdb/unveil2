@@ -60,6 +60,12 @@ module.exports = function (grunt) {
         qunit: {
             default: {
                 options: {
+                    page: {
+                        viewportSize : {
+                            width: 800,
+                            height: 200
+                        }
+                    },
                     console: true,
                     urls: [
                         'http://localhost:8000/test/jquery.html',
@@ -79,8 +85,7 @@ module.exports = function (grunt) {
             live: {
                 options: {
                     port: 8000,
-                    base: '.',
-                    debug: true
+                    base: '.'
                 }
             },
             test: {

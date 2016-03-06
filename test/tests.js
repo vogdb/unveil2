@@ -6,9 +6,10 @@
 
     "use strict";
 
-    QUnit.config.testTimeout = 10000;
+    QUnit.config.testTimeout = 2000;
 
-    var imageUrl = 'lazy.jpg';
+    var imageUrl = 'lazy.jpg',
+        debug = false;
 
     QUnit.test("Basic test", function (assert) {
         // Some basic tests if initial behaviour is consistent
@@ -20,12 +21,51 @@
     QUnit.test("Single image test", function (assert) {
         var done = assert.async(1);
         var image = $('<img/>')
-            .addClass('lazy')
+            .addClass('lazy topleft')
             .attr('data-src', imageUrl)
             .appendTo('body');
 
         $(image).unveil({
-            debug: true,
+            debug: debug,
+            loaded: function() {
+                assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
+                image.remove();
+                done();
+            }
+        });
+    });
+
+    QUnit.test("Scroll test", function (assert) {
+        var done = assert.async(1);
+        var image = $('<img/>')
+            .addClass('lazy down400')
+            .attr('data-src', imageUrl)
+            .appendTo('body');
+
+        $(image).unveil({
+            debug: debug,
+            loaded: function() {
+                assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
+                $(window).scrollTop(0);
+                image.remove();
+                done();
+            }
+        });
+
+        assert.ok(image.prop('src').indexOf(imageUrl) === -1, 'Image source should not be set');
+        $(window).scrollTop(400).trigger('scroll');
+    });
+
+    QUnit.test("Retina image test", function (assert) {
+        var done = assert.async(1);
+        var image = $('<img/>')
+            .addClass('lazy topleft')
+            .attr('data-src', 'unused.jpg|' + imageUrl)
+            .appendTo('body');
+
+        $(image).unveil({
+            debug: debug,
+            retina: true,
             loaded: function() {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
                 image.remove();
@@ -37,12 +77,12 @@
     QUnit.test("Background image test", function (assert) {
         var done = assert.async(1);
         var header = $('<header/>')
-            .addClass('lazy')
+            .addClass('lazy topleft')
             .attr('data-src', imageUrl)
             .appendTo('body');
 
         $(header).unveil({
-            debug: true,
+            debug: debug,
             loaded: function() {
                 assert.ok(header.css('backgroundImage').indexOf(imageUrl) > -1, 'DIV background-url should now be set');
                 header.remove();

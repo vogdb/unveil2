@@ -1,8 +1,17 @@
-img, header {
+.topleft {
     position: absolute;
     display: block;
     width: 10px;
     height: 10px;
     top: 0;
+    left: 0;
+}
+
+.down400 {
+    position: absolute;
+    display: block;
+    width: 10px;
+    height: 10px;
+    top: 400px;
     left: 0;
 }

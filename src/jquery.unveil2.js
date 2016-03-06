@@ -52,16 +52,19 @@
         // Initialize variables
         var $window = $(window),
             height = $window.height(),
-            retina = window.devicePixelRatio > 1,
             defaults = {
-                container: $window,
+                // Public API
                 placeholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
                 offset: 0,
                 breakpoints: [],
-                throttleTimeout: 250,
+                throttle: 250,
                 debug: false,
                 loading: null,
-                loaded: null
+                loaded: null,
+
+                // Undocumented
+                container: $window,
+                retina: window.devicePixelRatio > 1
             },
             settings = $.extend(true, {}, defaults, options);
 
@@ -106,11 +109,11 @@
 
             // Change attribute on image
             if (defaultSrc) {
-                targetSrc = (retina && retinaSrc) ? retinaSrc : defaultSrc;
+                targetSrc = (settings.retina && retinaSrc) ? retinaSrc : defaultSrc;
 
                 if (settings.debug) console.log('Unveiling image', {
                     attribute: attrib,
-                    retina: retina,
+                    retina: settings.retina,
                     defaultSrc: defaultSrc,
                     retinaSrc: retinaSrc,
                     targetSrc: targetSrc
@@ -235,7 +238,7 @@
                     setTimeout(function () {   // After a period of time
                         callback();            // Execute users function
                         wait = false;          // And allow future invocations
-                    }, settings.throttleTimeout);
+                    }, settings.throttle);
                 }
             };
         }
