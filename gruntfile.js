@@ -133,6 +133,10 @@ module.exports = function (grunt) {
                     ],
                     tunnelTimeout: 5,
                     build: process.env.TRAVIS_JOB_ID,
+                    tunnelIdentifier: process.env.TRAVIS_JOB_ID,
+                    username: process.env.SAUCE_USERNAME,
+                    accessKey: process.env.SAUCE_ACCESS_KEY,
+                    startConnect: false,
                     concurrency: 3,
                     testname: "qunit for unveil2",
                     browsers: browsers
