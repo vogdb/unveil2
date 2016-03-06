@@ -5,7 +5,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width">
         <title>Unveil2.js</title>
-        <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet">
+        <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/railscasts.min.css" rel="stylesheet">
+        <link href="style.css" rel="stylesheet"/>
         <style>
             body {
                 padding-top: 70px;
@@ -15,13 +17,13 @@
     <body>
         <nav class="navbar navbar-light bg-faded navbar-fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="index.html">Unveil2.js</a>
+                <a class="navbar-brand" href="index.html">Unveil2<span>.js</span></a>
                 <ul class="nav navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="simple.html">Simple</a>
-                            <a class="dropdown-item" href="background.html">CSS background</a>
+                            <a class="dropdown-item" href="examples/simple.html">Simple</a>
+                            <a class="dropdown-item" href="examples/background.html">CSS background</a>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -31,17 +33,110 @@
             </div>
         </nav>
         <article class="container">
-            <header class="jumbotron">
-                <h1>Unveil2.js</h1>
-                <h3>A very lightweight plugin to lazy load images for jQuery or Zepto.js</h3>
+            <header class="curtains jumbotron">
+                <h1>Unveil2<span>.js</span></h1>
+                <h3>Lightweight but rich lazy load plugin for jQuery/Zepto</h3>
                 <p>Source on <a href="https://github.com/hongaar/unveil2">GitHub</a></p>
             </header>
-            <ol>
-                <li><a href="simple.html">Simple</a></li>
-                <li><a href="background.html">CSS background</a></li>
-            </ol>
+            <aside class="card card-block pull-xs-right">
+                <h3 class="card-title">Examples</h3>
+                <ul class="list-unstyled">
+                    <li><a href="examples/simple.html">Simple</a></li>
+                    <li><a href="examples/background.html">CSS background</a></li>
+                </ul>
+            </aside>
+            <section>
+                <p>
+                    <a href="https://github.com/nabble/unveil2" title="GitHub"><img src="https://img.shields.io/github/stars/nabble/unveil2.svg?style=social&label=Star"></a>
+                    <a href="https://travis-ci.org/nabble/unveil2" title="Travis"><img src="https://img.shields.io/travis/nabble/unveil2.svg"></a>
+                    <a href="https://codeclimate.com/github/nabble/unveil2" title="Code Climate"><img src="https://img.shields.io/codeclimate/github/nabble/unveil2.svg"></a>
+                    <a href="https://www.npmjs.com/package/unveil2" title="npm"><img src="https://img.shields.io/npm/v/unveil2.svg"></a>
+                </p>
+                <h2>Usage</h2>
+                <h3>Basic</h3>
+                <p>Couldn't be easier. Include an image like you normally would, include the unveil2 script and initialize:</p>
+                <pre><code class="html">&lt;img src="photo.jpg"&gt;
+
+&lt;script src="//code.jquery.com/jquery-2.2.1.min.js"&gt;&lt;/script&gt;
+&lt;script src="jquery.unveil2.min.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    $('img').unveil();
+&lt;/script&gt;
+</code></pre>
+
+                <h3>Retina</h3>
+                <p>Unveil2 can replace images with a retina variant if it detects a high DPI screen. Define a retina image as follows:</p>
+                <pre><code class="html">&lt;img src="photo.jpg" data-src="photo.jpg|photo@2x.jpg"&gt;</code></pre>
+
+                <h3>Placeholder images</h3>
+                <p>To replace images with a placeholder once they're not yet loaded, use the <code>data-src-placeholder</code> attribute:</p>
+                <pre><code class="html">&lt;img src="photo.jpg" data-src-placeholder="placeholder.jpg" &gt;</code></pre>
+                <p><em>Note: Don't replace the original image in the <code>src</code> attribute with a placeholder image, since this will potentially mess with bots, scrapers and JavaScript disabled browsers. Unveil2 will tell the browser to stop loading the original image so it won't slow down the loading of the page.</em></p>
+
+                <h3>CSS background images</h3>
+                <p>Unveil2 can lazy load CSS background images:</p>
+                <pre><code class="html">&lt;header data-src="bg.jpg|bg@2x.jpg"&gt;
+&lt;script&gt;
+    $('header').unveil();
+&lt;/script&gt;</code></pre>
+
+                <h3>Breakpoints</h3>
+                <p>Specify larger images to be used on larger screen-widths by adding attributes and passing an array of breakpoints when invoking unveil2, for a true mobile-first experience:</p>
+                <pre><code class="html">&lt;img src="small.jpg" data-src-md="medium.jpg" /&gt;
+&lt;script&gt;
+    $('img').unveil({
+        breakpoints: [{
+            minWidth: 768,
+            attribute: 'data-src-md'
+        }]
+    });
+&lt;/script&gt;</code></pre>
+
+                <h3>Advanced example</h3>
+
+                <pre><code class="html">&lt;img src="http://loremflickr.com/450/300"
+     data-src="http://loremflickr.com/450/300|http://loremflickr.com/900/600"
+     data-src-md="http://loremflickr.com/750/500|http://loremflickr.com/1500/1000"
+     data-src-lg="http://loremflickr.com/1050/700|http://loremflickr.com/2100/1400"
+/&gt;
+
+&lt;script src="//code.jquery.com/jquery-2.2.1.min.js"&gt;&lt;/script&gt;
+&lt;script src="jquery.unveil2.min.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    $('img').unveil({
+        offset: 100,
+        throttle: 200,
+        placeholder: 'http://placehold.it/500x300'
+        loading: function () {
+            console.log('Unveiling', this);
+        },
+        loaded: function () {
+            console.log('Unveiled', this);
+        },
+        breakpoints: [
+            {
+                minWidth: 768,
+                attribute: 'data-src-md'
+            },
+            {
+                minWidth: 1200,
+                attribute: 'data-src-lg'
+            }
+        ],
+        debug: true
+    });
+&lt;/script&gt;</code></pre>
+                <p>For all available options, see <a href="api.html">API documentation</a>.</p>
+            </section>
+            <footer>
+                Cover image by <a href="https://www.flickr.com/photos/rvoegtli/8327407578">Rosmarie Voegtli</a>.
+            </footer>
         </article>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
+        <script src="index.js"></script>
     </body>
 </html>

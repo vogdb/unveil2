@@ -8,7 +8,7 @@ function updateProgress() {
 };
 
 $(selector).unveil({
-    offset: 100,
+    offset: 400,
     loading: function () {
         updateProgress(loading++);
     },

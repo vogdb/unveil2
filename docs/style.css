@@ -1,15 +1,44 @@
+@import url(https://fonts.googleapis.com/css?family=Bangers);
+
 body {
     padding-top: 70px;
 }
 
+h1, h2, h3 {
+    font-family: 'Bangers', cursive;
+    color: #ce3a24;
+}
+h1 {
+    font-size: 4rem;
+}
+h2 {
+    font-size: 3rem;
+}
+
 aside {
     width: 200px;
+}
+nav aside {
     margin-top: 10px;
     background-color: white;
+}
+article aside ul {
+    margin-bottom: 0;
 }
 
 .progress {
     margin-bottom: 0;
+}
+
+header.curtains {
+    background: url('unveil.jpg') 50% 100%;
+    background-size: cover;
+}
+header.curtains * {
+    color: white;
+}
+header.curtains h1 span, nav .navbar-brand span {
+    font-size: .7em;
 }
 
 img.lazy {
