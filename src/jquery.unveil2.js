@@ -22,6 +22,11 @@
     var unveilString = 'unveil',
 
     /**
+     * Store the string 'src' in a variable to save some bytes
+     */
+        srcString = 'src',
+
+    /**
      * A jQuery/Zepto collection of images which will be lazy loaded
      */
         images = $(),
@@ -79,7 +84,7 @@
          */
         this.one(unveilString, function () {
             var i, $this = $(this), windowWidth = $window.width(),
-                attrib = 'src', targetSrc, defaultSrc, retinaSrc;
+                attrib = srcString, targetSrc, defaultSrc, retinaSrc;
 
             // Determine attribute to extract source from
             for (i = 0; i < settings.breakpoints.length; i++) {
@@ -137,9 +142,9 @@
 
                 // Set new source
                 if (this.nodeName === 'IMG') {
-                    $this.prop("src", targetSrc);
+                    $this.prop(srcString, targetSrc);
                 } else {
-                    $('<img/>').attr('src', targetSrc).one('load', function() {
+                    $('<img/>').attr(srcString, targetSrc).one('load', function() {
                         $(this).remove();
                         $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load');
                     });
@@ -266,7 +271,7 @@
          */
         this.each(function () {
             var $this = $(this),
-                elmPlaceholder = $this.data('src-placeholder') || settings.placeholder;
+                elmPlaceholder = $this.data(srcString + '-placeholder') || settings.placeholder;
 
             // Add element to global array
             images = $(images).add(this);
@@ -279,8 +284,8 @@
                 $this.data(unveilString, true);
 
                 // Set data-src if not set
-                if (!$this.data('src')) {
-                    $this.data('src', $this.prop('src'));
+                if (!$this.data(srcString)) {
+                    $this.data(srcString, $this.prop(srcString));
                 }
 
                 // Set placeholder
@@ -289,8 +294,8 @@
                         $(this).addClass(unveilString + '-placeholder');
                         lookup();
                     })
-                    .prop('src', '')
-                    .prop('src', elmPlaceholder);
+                    .prop(srcString, '')
+                    .prop(srcString, elmPlaceholder);
             }
         });
 
