@@ -8,4 +8,5 @@ node_js:
 before_install: npm install -g grunt-cli
 install: npm install
 addons:
-  - sauce_connect
+  sauce_connect:
+    username: "joram"
