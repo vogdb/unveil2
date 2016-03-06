@@ -155,10 +155,18 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'jshint',
         'connect:live',
-        'qunit',
-        'saucelabs-qunit'
+        'qunit'
     ]);
 
+    /**
+     * Sauce task.
+     *
+     * run `grunt test`
+     */
+    grunt.registerTask('selenium', [
+        'connect:live',
+        'saucelabs-qunit'
+    ]);
 
     /**
      * Build task.
