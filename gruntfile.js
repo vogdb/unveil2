@@ -91,7 +91,7 @@ module.exports = function (grunt) {
                     page: {
                         viewportSize : {
                             width: 800,
-                            height: 200
+                            height: 800
                         }
                     },
                     console: true,

@@ -27,6 +27,11 @@
         srcString = 'src',
 
     /**
+     * Store the string 'placeholder' in a variable to save some bytes
+     */
+        placeholderString = 'placeholder',
+
+    /**
      * A jQuery collection of images which will be lazy loaded
      */
         images = $(),
@@ -180,7 +185,7 @@
          * @param {object} $elm
          */
         function classLoaded($elm) {
-            $elm.removeClass(unveilString + '-placeholder ' + unveilString + '-loading');
+            $elm.removeClass(unveilString + '-' + placeholderString + ' ' + unveilString + '-loading');
             $elm.addClass(unveilString + '-loaded');
         }
 
@@ -264,7 +269,7 @@
          */
         this.each(function () {
             var $this = $(this),
-                elmPlaceholder = $this.data(srcString + '-placeholder') || settings.placeholder;
+                elmPlaceholder = $this.data(srcString + '-' + placeholderString) || settings.placeholder;
 
             // Add element to global array
             images = $(images).add(this);
@@ -284,7 +289,13 @@
                 // Set placeholder
                 $this
                     .one('load', function () {
-                        $(this).addClass(unveilString + '-placeholder');
+                        var $this = $(this);
+
+                        if ($this.hasClass(unveilString + '-loaded')) {
+                            return;
+                        }
+
+                        $this.addClass(unveilString + '-' + placeholderString);
                         lookup();
                     })
                     .prop(srcString, '')

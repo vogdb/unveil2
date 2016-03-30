@@ -9,7 +9,11 @@
     QUnit.config.testTimeout = 2000;
 
     var imageUrl = 'lazy.jpg',
-        debug = false;
+        unusedUrl = 'unused.jpg',
+        debug = true,
+        uniqueImageUrl = function () {
+            return 'lazy.jpg?t=' + new Date().getTime();
+        };
 
     QUnit.test("Basic test", function (assert) {
         // Some basic tests if initial behaviour is consistent
@@ -22,12 +26,29 @@
         var done = assert.async(1);
         var image = $('<img/>')
             .addClass('lazy topleft')
-            .attr('data-src', imageUrl)
+            .attr('src', uniqueImageUrl())
             .appendTo('body');
 
         $(image).unveil({
             debug: debug,
-            loaded: function() {
+            loaded: function () {
+                assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should be set');
+                image.remove();
+                done();
+            }
+        });
+    });
+
+    QUnit.test("Single image with data-src test", function (assert) {
+        var done = assert.async(1);
+        var image = $('<img/>')
+            .addClass('lazy topleft')
+            .attr('data-src', uniqueImageUrl())
+            .appendTo('body');
+
+        $(image).unveil({
+            debug: debug,
+            loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
                 image.remove();
                 done();
@@ -35,16 +56,36 @@
         });
     });
 
-    QUnit.test("Scroll test", function (assert) {
+    QUnit.test("Placeholder test", function (assert) {
         var done = assert.async(1);
         var image = $('<img/>')
-            .addClass('lazy down400')
-            .attr('data-src', imageUrl)
+            .addClass('lazy topleft')
+            .attr('src', uniqueImageUrl())
+            .attr('data-src-placeholder', unusedUrl)
             .appendTo('body');
 
         $(image).unveil({
             debug: debug,
-            loaded: function() {
+            loaded: function () {
+                assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
+                image.remove();
+                done();
+            }
+        });
+
+        assert.ok(image.prop('src').indexOf(unusedUrl) > -1, 'Placeholder should now be set');
+    });
+
+    QUnit.test("Scroll test", function (assert) {
+        var done = assert.async(1);
+        var image = $('<img/>')
+            .addClass('lazy waydown')
+            .attr('data-src', uniqueImageUrl())
+            .appendTo('body');
+
+        $(image).unveil({
+            debug: debug,
+            loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
                 $(window).scrollTop(0);
                 image.remove();
@@ -53,20 +94,20 @@
         });
 
         assert.ok(image.prop('src').indexOf(imageUrl) === -1, 'Image source should not be set');
-        $(window).scrollTop(400).trigger('scroll');
+        $(window).scrollTop(2000).trigger('scroll');
     });
 
     QUnit.test("Retina image test", function (assert) {
         var done = assert.async(1);
         var image = $('<img/>')
             .addClass('lazy topleft')
-            .attr('data-src', 'unused.jpg|' + imageUrl)
+            .attr('data-src', 'unused.jpg|' + uniqueImageUrl())
             .appendTo('body');
 
         $(image).unveil({
             debug: debug,
             retina: true,
-            loaded: function() {
+            loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
                 image.remove();
                 done();
@@ -78,12 +119,12 @@
         var done = assert.async(1);
         var header = $('<header/>')
             .addClass('lazy topleft')
-            .attr('data-src', imageUrl)
+            .attr('data-src', uniqueImageUrl())
             .appendTo('body');
 
         $(header).unveil({
             debug: debug,
-            loaded: function() {
+            loaded: function () {
                 assert.ok(header.css('backgroundImage').indexOf(imageUrl) > -1, 'DIV background-url should now be set');
                 header.remove();
                 done();
