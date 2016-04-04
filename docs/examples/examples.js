@@ -9,13 +9,7 @@ function updateProgress() {
 
 $(selector).unveil({
     offset: 400,
-    loading: function () {
-        updateProgress(loading++);
-    },
-    loaded: function () {
-        updateProgress(loaded++);
-    },
-    placeholder: 'http://placehold.it/500x300/C8D3DC?text=placeholder',
+    placeholder: 'http://placehold.it/400x300/C8D3DC?text=placeholder',
     throttle: 200,
     breakpoints: [
         {
@@ -27,4 +21,8 @@ $(selector).unveil({
             attribute: 'data-src-lg'
         }
     ]
+}).on('loading.unveil', function () {
+    updateProgress(loading++);
+}).on('loaded.unveil', function () {
+    updateProgress(loaded++);
 });

@@ -64,12 +64,14 @@
                 breakpoints: [],
                 throttle: 250,
                 debug: false,
-                loading: null,
-                loaded: null,
 
                 // Undocumented
                 container: $window,
-                retina: window.devicePixelRatio > 1
+                retina: window.devicePixelRatio > 1,
+
+                // Deprecated
+                loading: null,
+                loaded: null
             },
             settings = $.extend(true, {}, defaults, options);
 
@@ -90,7 +92,7 @@
         /**
          * This is the actual plugin logic, which determines the source attribute to use based on window width and presence of a retina screen, changes the source of the image, handles class name changes and triggers a callback if set. Once the image has been loaded, start the unveil lookup because the page layout could have changed.
          */
-        this.one(unveilString, function () {
+        this.one(unveilString + '.' + unveilString, function () {
             var i, $this = $(this), windowWidth = $window.width(),
                 attrib = srcString, targetSrc, defaultSrc, retinaSrc;
 
@@ -127,10 +129,12 @@
                 // Change classes
                 classLoading($this);
 
-                // Fire up the callback if it's a function
+                // Fire up the callback if it's a function...
                 if (typeof settings.loading === 'function') {
                     settings.loading.call(this);
                 }
+                // ...and trigger custom event
+                $this.trigger('loading.unveil');
 
                 // When new source has loaded, do stuff
                 $this.one('load', function () {
@@ -138,10 +142,12 @@
                     // Change classes
                     classLoaded($this);
 
-                    // Fire up the callback if it's a function
+                    // Fire up the callback if it's a function...
                     if (typeof settings.loaded === 'function') {
                         settings.loaded.call(this);
                     }
+                    // ...and trigger custom event
+                    $this.trigger('loaded.unveil');
 
                     // Loading the image may have modified page layout,
                     // so unveil again
@@ -251,7 +257,7 @@
 
             var batch = images.filter(inview);
 
-            batch.trigger(unveilString);
+            batch.trigger(unveilString + '.' + unveilString);
             images = images.not(batch);
 
             if (batch.length) {

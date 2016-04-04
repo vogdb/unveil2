@@ -7,7 +7,7 @@
         <title>Unveil2.js</title>
         <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet">
         <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/railscasts.min.css" rel="stylesheet">
-        <link href="style.css" rel="stylesheet"/>
+        <link href="style.css" rel="stylesheet">
         <style>
             body {
                 padding-top: 70px;
@@ -36,9 +36,10 @@
             <header class="curtains jumbotron">
                 <h1>Unveil2<span>.js</span></h1>
                 <h3>Lightweight but rich lazy load plugin for jQuery</h3>
-                <p>Source on <a href="https://github.com/hongaar/unveil2">GitHub</a></p>
+                <p><a href="https://github.com/hongaar/unveil2">Source on GitHub</a></p>
+                <small class="pull-xs-right">Image by <a href="https://www.flickr.com/photos/rvoegtli/8327407578">Rosmarie Voegtli</a></small>
             </header>
-            <aside class="card card-block pull-xs-right">
+            <aside class="card card-block pull-xs-right cf">
                 <h3 class="card-title">Examples</h3>
                 <ul class="list-unstyled">
                     <li><a href="examples/simple.html">Simple</a></li>
@@ -108,13 +109,7 @@
     $('img').unveil({
         offset: 100,
         throttle: 200,
-        placeholder: 'http://placehold.it/500x300'
-        loading: function () {
-            console.log('Unveiling', this);
-        },
-        loaded: function () {
-            console.log('Unveiled', this);
-        },
+        placeholder: 'http://placehold.it/500x300',
         breakpoints: [
             {
                 minWidth: 768,
@@ -126,17 +121,18 @@
             }
         ],
         debug: true
+    }).on('loading.unveil', function () {
+        console.log('Unveiling', this);
+    }).on('loaded.unveil', function () {
+        console.log('Unveiled', this);
     });
 &lt;/script&gt;</code></pre>
                 <p>For all available options, see <a href="api.html">API documentation</a>.</p>
             </section>
-            <footer>
-                Cover image by <a href="https://www.flickr.com/photos/rvoegtli/8327407578">Rosmarie Voegtli</a>.
-            </footer>
         </article>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-        <script src="index.js"></script>
+        <script src="script.js"></script>
     </body>
 </html>

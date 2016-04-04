@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width">
         <title>Unveil2.js</title>
         <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/railscasts.min.css" rel="stylesheet">
         <link href="style.css" rel="stylesheet"/>
         <style>
             body {
@@ -21,8 +22,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="simple.html">Simple</a>
-                            <a class="dropdown-item" href="background.html">CSS background</a>
+                            <a class="dropdown-item" href="examples/simple.html">Simple</a>
+                            <a class="dropdown-item" href="examples/background.html">CSS background</a>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -54,12 +55,6 @@
                         <th scope="row">throttle</th>
                         <td>int</td>
                         <td>250</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"></th>
-                        <td>int</td>
-                        <td></td>
                         <td>Throttle amount of lookups while scrolling or resizing (once every ... ms)</td>
                     </tr>
                     <tr>
@@ -67,18 +62,6 @@
                         <td>string</td>
                         <td><a href="http://stackoverflow.com/a/13139830/938297">pixel</a></td>
                         <td>Use this placeholder image. Can be a relative/absolute URL or data-URI. Defaults to a transparent pixel. Can also be set per-image by `data-src-placeholder` attribute.</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">loading</th>
-                        <td>function</td>
-                        <td>null</td>
-                        <td>Fire this function once a image starts loading</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">loaded</th>
-                        <td>function</td>
-                        <td>null</td>
-                        <td>Fire this function once a image has been loaded</td>
                     </tr>
                     <tr>
                         <th scope="row">breakpoints</th>
@@ -92,35 +75,83 @@
                         <td>false</td>
                         <td>Prints debug messages to the console when true (doesn't work in minified version)</td>
                     </tr>
+                    <tr>
+                        <th scope="row">loading</th>
+                        <td>function</td>
+                        <td>null</td>
+                        <td><strong>DEPRECATED</strong> Use event instead</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">loaded</th>
+                        <td>function</td>
+                        <td>null</td>
+                        <td><strong>DEPRECATED</strong> Use event instead</td>
+                    </tr>
                 </tbody>
             </table>
 
             <h2>Events</h2>
-            <h3>Trigger</h3>
             <p>
-                You can still trigger image loading whenever you need. All you have to do is select the images you want to 'unveil' and trigger the event:<br/>
-                <code>
-                    $("img").trigger("unveil");
-                </code>
+                All events are namespaced, you can listen to them with just the event name (i.e. <code>loading</code>) or
+                use the fully qualified name (i.e. <code>loading.unveil</code>) in case of conflicts with other plugins.
             </p>
+            <h3>Triggers</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">loading</th>
+                    <td>Fired on the target element once a image starts loading</td>
+                </tr>
+                <tr>
+                    <th scope="row">loaded</th>
+                    <td>Fired on the target element once a image has been loaded</td>
+                </tr>
+                </tbody>
+            </table>
+            <pre><code class="js">// example
+$('body').on('loaded.unveil', 'img.lazy', function () {
+    imagesLoaded++;
+});</code></pre>
 
-            <h3>Lookup</h3>
-            <p>
-                It is also possible to lookup for images in the viewport that haven't been 'unveiled' yet. This can be useful, for instance, in case of a tabbed layout.<br/>
-                <code>
-                $(window).trigger("lookup");
-                </code>
-            </p>
+            <h3>Methods</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">unveil</th>
+                    <td>Trigger the loading of an image on the target element</td>
+                </tr>
+                <tr>
+                    <th scope="row">lookup</th>
+                    <td>Manually lookup images in the viewport that haven't been unveiled yet, call on the container (<code>window</code> by default).</td>
+                </tr>
+                </tbody>
+            </table>
+            <pre><code class="js">// example, i.e. after tab change
+$('img.lazy').trigger('unveil');</code></pre>
 
-            <h3>Cancel</h3>
+            <h3>Deactivate</h3>
             <p>
-                You can remove all the 'unveil' event handlers from 'window':<br/>
-                <code>
-                $(window).off("unveil");
-                </code>
+                You can remove all of unveils functionality by removing all event handlers:
             </p>
+            <pre><code class="js">// example
+$(window).add('img.lazy').off('.unveil');</code></pre>
+
         </article>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
+        <script src="script.js"></script>
     </body>
 </html>

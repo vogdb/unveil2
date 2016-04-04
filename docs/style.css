@@ -1,7 +1,7 @@
 @import url(https://fonts.googleapis.com/css?family=Bangers);
 
 body {
-    padding-top: 70px;
+    padding: 70px 0;
 }
 
 h1, h2, h3 {
@@ -39,6 +39,14 @@ header.curtains * {
 }
 header.curtains h1 span, nav .navbar-brand span {
     font-size: .7em;
+}
+header.curtains small {
+    position: relative;
+    top: 2rem;
+    right: -1rem;
+}
+header.curtains small, header.curtains small a {
+    color: rgba(128,128,128,0.75) !important;
 }
 
 img.lazy {
