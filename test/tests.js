@@ -132,4 +132,27 @@
         });
     });
 
+    QUnit.test("Classes test", function (assert) {
+        assert.expect(2);
+        var done1 = assert.async(),
+            done2 = assert.async(),
+            image = $('<img/>')
+                .addClass('lazy topleft')
+                .attr('src', uniqueImageUrl())
+                .appendTo('body');
+
+        $(image).unveil({
+            debug: debug,
+            loading: function () {
+                assert.ok(image.hasClass('unveil-loading'), 'Loading class should be set');
+                done1();
+            },
+            loaded: function () {
+                assert.ok(image.hasClass('unveil-loaded'), 'Loaded class should be set');
+                image.remove();
+                done2();
+            }
+        });
+    });
+
 }());

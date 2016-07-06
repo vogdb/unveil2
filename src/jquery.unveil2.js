@@ -127,7 +127,7 @@
                 });
 
                 // Change classes
-                classLoading($this);
+                $this.addClass(unveilString + '-loading');
 
                 // Fire up the callback if it's a function...
                 if (typeof settings.loading === 'function') {
@@ -175,15 +175,6 @@
          * # HELPER FUNCTIONS
          * ---
          */
-
-        /**
-         * Sets the classes when an image is loading
-         *
-         * @param {object} $elm
-         */
-        function classLoading($elm) {
-            $elm.addClass(unveilString + '-loading');
-        }
 
         /**
          * Sets the classes when an image is done loading
