@@ -81,6 +81,19 @@ module.exports = function (grunt) {
 
 
         /**
+         * Copy.
+         *
+         * @github.com/gruntjs/grunt-contrib-copy
+         */
+        copy: {
+            main: {
+                src: 'dist/jquery.unveil2.min.js',
+                dest: 'docs/jquery.unveil2.min.js'
+            }
+        },
+
+
+        /**
          * QUnit
          *
          * @github.com/gruntjs/grunt-contrib-qunit
@@ -155,7 +168,8 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'jshint',
         'connect:live',
-        'qunit'
+        'qunit',
+        'saucelabs-qunit'
     ]);
 
     /**
@@ -175,7 +189,8 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('build', [
         'test',
-        'uglify'
+        'uglify',
+        'copy'
     ]);
 
 
@@ -186,5 +201,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-saucelabs');
 };
