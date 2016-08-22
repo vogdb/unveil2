@@ -138,6 +138,12 @@ module.exports = function (grunt) {
             }
         },
 
+
+        /**
+         * Sauce Labs (QUnit)
+         *
+         * @github.com/axemclion/grunt-saucelabs
+         */
         'saucelabs-qunit': {
             all: {
                 options: {
@@ -155,6 +161,21 @@ module.exports = function (grunt) {
                     browsers: browsers
                 }
             }
+        },
+
+
+        /**
+         * Travis Matrix
+         *
+         * @github.com/tandrewnichols/grunt-travis-matrix
+         */
+        travisMatrix: {
+            v5: {
+                test: function () {
+                    return (/^v5/).test(process.version);
+                },
+                tasks: ['saucelabs-qunit']
+            }
         }
 
     });
@@ -169,7 +190,7 @@ module.exports = function (grunt) {
         'jshint',
         'connect:live',
         'qunit',
-        'saucelabs-qunit'
+        'travisMatrix'
     ]);
 
     /**
@@ -203,4 +224,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-saucelabs');
+    grunt.loadNpmTasks('grunt-travis-matrix');
 };
