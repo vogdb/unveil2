@@ -56,6 +56,25 @@
         });
     });
 
+    QUnit.test("Custom attribute source test", function (assert) {
+        var done = assert.async(1);
+        var image = $('<img/>')
+            .addClass('lazy')
+            .attr('data-custom', uniqueImageUrl())
+            .appendTo('body');
+
+        image.on('loaded.unveil', function () {
+            assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
+            image.remove();
+            done();
+        });
+
+        $(image).unveil({
+            attribute: 'custom',
+            debug: debug
+        });
+    });
+
     QUnit.test("Placeholder test", function (assert) {
         var done = assert.async(1);
         var image = $('<img/>')
