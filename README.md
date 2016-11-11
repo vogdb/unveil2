@@ -29,7 +29,7 @@ __Note:__ If you load scripts at the bottom of the page, [you don't have to wait
 
 ## More examples
 
-CSS background, retina images, breakpoints and more: [see our online examples](http://nabble.github.io/unveil2/docs/index.html).
+CSS background, retina images, breakpoints and more: [see online examples](http://nabble.github.io/unveil2/).
 
 ## More configuration options
 
