@@ -15,6 +15,15 @@
             return 'lazy.jpg?t=' + new Date().getTime();
         };
 
+    QUnit.module("Unveil tests", {
+        setup: function () {
+            $('body').append('<div id="testContainer"></div>');
+        },
+        teardown: function () {
+            $('#testContainer').remove();
+        }
+    });
+
     QUnit.test("Basic test", function (assert) {
         // Some basic tests if initial behaviour is consistent
         assert.equal(typeof $.fn.unveil, 'function', 'Unveil should be loaded');
@@ -27,13 +36,12 @@
         var image = $('<img/>')
             .addClass('lazy topleft')
             .attr('src', uniqueImageUrl())
-            .appendTo('body');
+            .appendTo('#testContainer');
 
         $(image).unveil({
             debug: debug,
             loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should be set');
-                image.remove();
                 done();
             }
         });
@@ -44,13 +52,12 @@
         var image = $('<img/>')
             .addClass('lazy topleft')
             .attr('data-src', uniqueImageUrl())
-            .appendTo('body');
+            .appendTo('#testContainer');
 
         $(image).unveil({
             debug: debug,
             loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
-                image.remove();
                 done();
             }
         });
@@ -61,11 +68,10 @@
         var image = $('<img/>')
             .addClass('lazy')
             .attr('data-custom', uniqueImageUrl())
-            .appendTo('body');
+            .appendTo('#testContainer');
 
         image.on('loaded.unveil', function () {
             assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
-            image.remove();
             done();
         });
 
@@ -81,13 +87,12 @@
             .addClass('lazy topleft')
             .attr('src', uniqueImageUrl())
             .attr('data-src-placeholder', unusedUrl)
-            .appendTo('body');
+            .appendTo('#testContainer');
 
         $(image).unveil({
             debug: debug,
             loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
-                image.remove();
                 done();
             }
         });
@@ -100,14 +105,13 @@
         var image = $('<img/>')
             .addClass('lazy waydown')
             .attr('data-src', uniqueImageUrl())
-            .appendTo('body');
+            .appendTo('#testContainer');
 
         $(image).unveil({
             debug: debug,
             loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
                 $(window).scrollTop(0);
-                image.remove();
                 done();
             }
         });
@@ -121,14 +125,13 @@
         var image = $('<img/>')
             .addClass('lazy topleft')
             .attr('data-src', 'unused.jpg|' + uniqueImageUrl())
-            .appendTo('body');
+            .appendTo('#testContainer');
 
         $(image).unveil({
             debug: debug,
             retina: true,
             loaded: function () {
                 assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
-                image.remove();
                 done();
             }
         });
@@ -139,13 +142,12 @@
         var header = $('<header/>')
             .addClass('lazy topleft')
             .attr('data-src', uniqueImageUrl())
-            .appendTo('body');
+            .appendTo('#testContainer');
 
         $(header).unveil({
             debug: debug,
             loaded: function () {
                 assert.ok(header.css('backgroundImage').indexOf(imageUrl) > -1, 'DIV background-url should now be set');
-                header.remove();
                 done();
             }
         });
@@ -158,7 +160,7 @@
             image = $('<img/>')
                 .addClass('lazy topleft')
                 .attr('src', uniqueImageUrl())
-                .appendTo('body');
+                .appendTo('#testContainer');
 
         $(image).unveil({
             debug: debug,
@@ -168,7 +170,6 @@
             },
             loaded: function () {
                 assert.ok(image.hasClass('unveil-loaded'), 'Loaded class should be set');
-                image.remove();
                 done2();
             }
         });
