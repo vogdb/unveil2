@@ -64,6 +64,7 @@
                 breakpoints: [],
                 throttle: 250,
                 debug: false,
+                attribute: srcString,
 
                 // Undocumented
                 container: $window,
@@ -94,7 +95,7 @@
          */
         this.one(unveilString + '.' + unveilString, function () {
             var i, $this = $(this), windowWidth = $window.width(),
-                attrib = srcString, targetSrc, defaultSrc, retinaSrc;
+                attrib = settings.attribute, targetSrc, defaultSrc, retinaSrc;
 
             // Determine attribute to extract source from
             for (i = 0; i < settings.breakpoints.length; i++) {
@@ -279,8 +280,8 @@
                 $this.data(unveilString, true);
 
                 // Set data-src if not set
-                if (!$this.data(srcString)) {
-                    $this.data(srcString, $this.prop(srcString));
+                if (!$this.data(settings.attribute)) {
+                    $this.data(settings.attribute, $this.prop(settings.attribute));
                 }
 
                 // Set placeholder
