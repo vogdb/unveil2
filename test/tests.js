@@ -16,10 +16,10 @@
         };
 
     QUnit.module("Unveil tests", {
-        setup: function () {
+        beforeEach: function () {
             $('body').append('<div id="testContainer"></div>');
         },
-        teardown: function () {
+        afterEach: function () {
             $('#testContainer').remove();
         }
     });
