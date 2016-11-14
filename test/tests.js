@@ -120,6 +120,34 @@
         $(window).scrollTop(2000).trigger('scroll');
     });
 
+    QUnit.test("Custom container test", function (assert) {
+        var done = assert.async(1);
+        var customContainer = $('<div></div>')
+            .addClass('scrollable-container')
+            .append('<div class="content"></div>')
+            .appendTo('#testContainer');
+        var image = $('<img height="200" width="200"/>')
+            .addClass('lazy content-img-bottom')
+            .attr('data-src', uniqueImageUrl())
+            .appendTo('.content');
+
+        var options = {
+            debug: debug,
+            offset: 200,
+            container: customContainer
+        };
+        var preloadingHeight = customContainer.find('.content').height() - options.offset - image.height() - customContainer.height() - 1;
+        customContainer.scrollTop(preloadingHeight);
+        $(image).unveil(options);
+        assert.ok(image.prop('src').indexOf(imageUrl) === -1, 'Image source should not be set');
+
+        image.on('loaded.unveil', function () {
+            assert.ok(image.prop('src').indexOf(imageUrl) > -1, 'Image source should now be set');
+            done();
+        });
+        customContainer.scrollTop(preloadingHeight + 1);
+    });
+
     QUnit.test("Retina image test", function (assert) {
         var done = assert.async(1);
         var image = $('<img/>')
