@@ -15,6 +15,16 @@
             return 'lazy.jpg?t=' + new Date().getTime();
         };
 
+    function createScrollableContainer () {
+        return $('<div class="scrollable-container"><div class="content"></div></div>');
+    }
+
+    function createLazyImage (className) {
+        return $('<img/>')
+            .addClass('lazy ' + className)
+            .attr('data-src', uniqueImageUrl());
+    }
+
     QUnit.module("Unveil tests", {
         beforeEach: function () {
             $('body').append('<div id="testContainer"></div>');
@@ -200,6 +210,60 @@
                 assert.ok(image.hasClass('unveil-loaded'), 'Loaded class should be set');
                 done2();
             }
+        });
+    });
+
+    QUnit.module("Multiple container", function (hooks) {
+        var container1;
+        hooks.beforeEach(function () {
+            container1 = createScrollableContainer();
+            container1.find('.content').append(createLazyImage('content-img-bottom'));
+            container1.appendTo('#testContainer');
+        });
+
+        QUnit.test("Scroll on window does not reveal custom container", function(assert) {
+            var done = assert.async(1);
+
+            var windowContent = $('<div class="content"></div>');
+            $('#testContainer').append(windowContent);
+            $(window).scrollTop(windowContent.height());
+
+            var lazyImages = container1.find('.lazy');
+            lazyImages.on('loaded.unveil', function () {
+                assert.ok(false, 'Image source should not be set');
+                done();
+            });
+            lazyImages.find('.lazy').unveil({
+                debug: debug,
+                container: container1
+            });
+
+            assert.ok(lazyImages.prop('src').indexOf(imageUrl) === -1, 'Image source should not be set');
+            setTimeout(done, 0);
+        });
+
+        QUnit.test("Scroll on container1 does not reveal container2", function(assert) {
+            var done = assert.async(1);
+
+            var container2 = createScrollableContainer();
+            container2.find('.content').append(createLazyImage('content-img-bottom'));
+            container2.appendTo('#testContainer');
+
+            $(container1).scrollTop(container1.find('.content').height());
+
+            var lazyImages = container2.find('.lazy');
+            lazyImages.on('loaded.unveil', function () {
+                assert.ok(false, 'Image source should not be set');
+                done();
+            });
+            lazyImages.unveil({
+                debug: debug,
+                container: container2
+            });
+            container1.find('.lazy').unveil({container: container1});
+
+            assert.ok(lazyImages.prop('src').indexOf(imageUrl) === -1, 'Image source should not be set');
+            setTimeout(done, 0);
         });
     });
 

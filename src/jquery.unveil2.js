@@ -39,17 +39,7 @@
     /**
      * Store the string 'placeholder' in a variable to save some bytes
      */
-        placeholderString = 'placeholder',
-
-    /**
-     * A jQuery collection of images which will be lazy loaded
-     */
-        images = $(),
-
-    /**
-     * A flag to set initialized state, so we can set global listeners only once
-     */
-        initialized = false;
+        placeholderString = 'placeholder';
 
     /**
      * # PLUGIN
@@ -94,6 +84,15 @@
         settings.breakpoints.sort(function (a, b) {
             return b.minWidth - a.minWidth;
         });
+
+        var containerContext = settings.container.data('unveil2');
+        if (!containerContext) {
+            containerContext = {
+                images: $(),
+                initialized: false
+            };
+            settings.container.data('unveil2', containerContext);
+        }
 
         /**
          * # UNVEIL IMAGES
@@ -275,13 +274,13 @@
         function lookup() {
             if (settings.debug) console.log('Unveiling');
 
-            var batch = images.filter(inview);
+            var batch = containerContext.images.filter(inview);
 
             batch.trigger(unveilString + '.' + unveilString);
-            images = images.not(batch);
+            containerContext.images = containerContext.images.not(batch);
 
             if (batch.length) {
-                if (settings.debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+                if (settings.debug) console.log('New images in view', batch.length, ', leaves', containerContext.length, 'in collection');
             }
         }
 
@@ -298,7 +297,7 @@
                 elmPlaceholder = $this.data(srcString + '-' + placeholderString) || settings.placeholder;
 
             // Add element to global array
-            images = $(images).add(this);
+            containerContext.images = $(containerContext.images).add(this);
 
             // If this element has been called before,
             // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
@@ -329,18 +328,18 @@
             }
         });
 
-        if (settings.debug) console.log('Images now in collection', images.length);
+        if (settings.debug) console.log('Images now in collection', containerContext.images.length);
 
         /**
          * Bind global listeners
          */
-        {if (!initialized) {
+        {if (!containerContext.initialized) {
             settings.container.on({
                 'resize.unveil': throttle(resize),
                 'scroll.unveil': throttle(lookup),
                 'lookup.unveil': lookup
             });
-            initialized = true;
+            containerContext.initialized = true;
         }}
 
         /**
