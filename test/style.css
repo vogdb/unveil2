@@ -26,6 +26,11 @@
     position: relative;
 }
 
+.content-img-top {
+    position: absolute;
+    top: 0;
+}
+
 .content-img-bottom {
     position: absolute;
     bottom: 0;

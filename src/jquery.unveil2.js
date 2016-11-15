@@ -181,6 +181,14 @@
             }
         });
 
+        this.one('destroy.' + unveilString, function () {
+            containerContext.images = containerContext.images.not(this);
+            if (!containerContext.images.length) {
+                destroyContainer();
+            }
+            $(this).off('.unveil');
+        });
+
         /**
          * # HELPER FUNCTIONS
          * ---
@@ -284,6 +292,14 @@
             }
         }
 
+        function destroyContainer() {
+            settings.container.off('.unveil');
+            settings.container.data('unveil2', null);
+            containerContext.initialized = false;
+            containerContext.images.off('.unveil');
+            containerContext.images = null;
+        }
+
         /**
          * # BOOTSTRAPPING
          * ---
@@ -337,7 +353,8 @@
             settings.container.on({
                 'resize.unveil': throttle(resize),
                 'scroll.unveil': throttle(lookup),
-                'lookup.unveil': lookup
+                'lookup.unveil': lookup,
+                'destroy.unveil': destroyContainer
             });
             containerContext.initialized = true;
         }}

@@ -267,4 +267,37 @@
         });
     });
 
+    QUnit.test("Destroy container", function (assert) {
+        var done = assert.async();
+        var container = createScrollableContainer();
+        var topImage = createLazyImage('content-img-top');
+        var bottomImage = createLazyImage('content-img-bottom');
+        var containerContent = container.find('.content');
+        containerContent.append(topImage);
+        containerContent.append(bottomImage);
+        container.appendTo('#testContainer');
+
+        var lazyImages = container.find('.lazy');
+        lazyImages.unveil({
+            debug: debug,
+            container: container
+        });
+
+        setTimeout(function () {
+            assert.ok(topImage.prop('src').indexOf(imageUrl) > -1, 'Top image source should now be set');
+            lazyImages.trigger('destroy.unveil');
+            container.scrollTop(containerContent.height()).trigger('scroll');
+            setTimeout(function() {
+                assert.ok(bottomImage.prop('src').indexOf(imageUrl) === -1, 'Bottom image source should not be set');
+                bottomImage.on('loaded.unveil', function() {
+                    assert.ok(bottomImage.prop('src').indexOf(imageUrl) > -1, 'Bottom image source should now be set');
+                    done();
+                });
+                lazyImages.unveil({
+                    debug: debug,
+                    container: container
+                });
+            }, 0);
+        }, 200);
+    })
 }());
