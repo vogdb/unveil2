@@ -65,9 +65,9 @@
                 throttle: 250,
                 debug: false,
                 attribute: srcString,
+                container: $window,
 
                 // Undocumented
-                container: $window,
                 retina: window.devicePixelRatio > 1,
 
                 // Deprecated
