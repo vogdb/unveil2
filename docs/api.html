@@ -152,7 +152,10 @@ $('img.lazy').trigger('unveil');</code></pre>
                 You can remove all of unveils functionality by removing all event handlers:
             </p>
             <pre><code class="js">// example
-$(window).add('img.lazy').off('.unveil');</code></pre>
+$('img.lazy').trigger('destroy.unveil');
+//or
+$('.unveilContainer').trigger('destroy.unveil');
+            </code></pre>
 
         </article>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
