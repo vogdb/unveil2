@@ -32,6 +32,11 @@
     var unveilString = 'unveil',
 
     /**
+     * jQuery event namespace
+     */
+        unveilNamespace = '.' + unveilString,
+
+    /**
      * Store the string 'src' in a variable to save some bytes
      */
         srcString = 'src',
@@ -39,17 +44,7 @@
     /**
      * Store the string 'placeholder' in a variable to save some bytes
      */
-        placeholderString = 'placeholder',
-
-    /**
-     * A jQuery collection of images which will be lazy loaded
-     */
-        images = $(),
-
-    /**
-     * A flag to set initialized state, so we can set global listeners only once
-     */
-        initialized = false;
+        placeholderString = 'placeholder';
 
     /**
      * # PLUGIN
@@ -75,9 +70,9 @@
                 throttle: 250,
                 debug: false,
                 attribute: srcString,
+                container: $window,
 
                 // Undocumented
-                container: $window,
                 retina: window.devicePixelRatio > 1,
 
                 // Deprecated
@@ -95,6 +90,15 @@
             return b.minWidth - a.minWidth;
         });
 
+        var containerContext = settings.container.data(unveilString);
+        if (!containerContext) {
+            containerContext = {
+                images: $(),
+                initialized: false
+            };
+            settings.container.data(unveilString, containerContext);
+        }
+
         /**
          * # UNVEIL IMAGES
          * ---
@@ -103,7 +107,7 @@
         /**
          * This is the actual plugin logic, which determines the source attribute to use based on window width and presence of a retina screen, changes the source of the image, handles class name changes and triggers a callback if set. Once the image has been loaded, start the unveil lookup because the page layout could have changed.
          */
-        this.one(unveilString + '.' + unveilString, function () {
+        this.one(unveilString + unveilNamespace, function () {
             var i, $this = $(this), windowWidth = $window.width(),
                 attrib = settings.attribute, targetSrc, defaultSrc, retinaSrc;
 
@@ -145,10 +149,10 @@
                     settings.loading.call(this);
                 }
                 // ...and trigger custom event
-                $this.trigger('loading.unveil');
+                $this.trigger('loading' + unveilNamespace);
 
                 // When new source has loaded, do stuff
-                $this.one('load', function () {
+                $this.one('load' + unveilNamespace, function () {
 
                     // Change classes
                     classLoaded($this);
@@ -158,7 +162,7 @@
                         settings.loaded.call(this);
                     }
                     // ...and trigger custom event
-                    $this.trigger('loaded.unveil');
+                    $this.trigger('loaded' + unveilNamespace);
 
                     // Loading the image may have modified page layout,
                     // so unveil again
@@ -169,15 +173,25 @@
                 if (this.nodeName === 'IMG') {
                     $this.prop(srcString, targetSrc);
                 } else {
-                    $('<img/>').attr(srcString, targetSrc).one('load', function() {
+                    $('<img/>').attr(srcString, targetSrc).one('load' + unveilNamespace, function() {
                         $(this).remove();
-                        $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load');
+                        $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load' + unveilNamespace);
                     });
                 }
 
                 // If the image has instantly loaded, change classes now
                 if (this.complete) {
                     classLoaded($this);
+                }
+            }
+        });
+
+        this.one('destroy' + unveilNamespace, function () {
+            $(this).off(unveilNamespace);
+            if (containerContext.images) {
+                containerContext.images = containerContext.images.not(this);
+                if (!containerContext.images.length) {
+                    destroyContainer();
                 }
             }
         });
@@ -210,13 +224,31 @@
                 return;
             }
 
-            var viewportTop = $window.scrollTop(),
-                viewportEnd = viewportTop + height,
-                containerTop = settings.container[0] !== $window[0] ? viewportTop - settings.container.offset().top : 0,
-                elementTop = $this.offset().top + containerTop,
-                elementEnd = elementTop + $this.height();
+            var viewport = {top: 0 - settings.offset, bottom: $window.height() + settings.offset},
+                isCustomContainer = settings.container[0] !== $window[0],
+                elementRect = this.getBoundingClientRect();
+            if (isCustomContainer) {
+                var containerRect = settings.container[0].getBoundingClientRect();
+                if (contains(viewport, containerRect)) {
+                    var top = containerRect.top - settings.offset;
+                    var bottom = containerRect.bottom + settings.offset;
+                    var containerRectWithOffset = {
+                        top: top > viewport.top ? top : viewport.top,
+                        bottom: bottom < viewport.bottom ? bottom : viewport.bottom
+                    };
+                    return contains(containerRectWithOffset, elementRect);
+                }
+                return false;
+            } else {
+                return contains(viewport, elementRect);
+            }
+        }
 
-            return elementEnd >= viewportTop - settings.offset && elementTop <= viewportEnd + settings.offset;
+        /**
+         * Whether `viewport` contains `rect` vertically
+         */
+        function contains(viewport, rect) {
+            return rect.bottom >= viewport.top && rect.top <= viewport.bottom;
         }
 
         /**
@@ -257,14 +289,24 @@
         function lookup() {
             if (settings.debug) console.log('Unveiling');
 
-            var batch = images.filter(inview);
+            if (containerContext.images) {
+                var batch = containerContext.images.filter(inview);
 
-            batch.trigger(unveilString + '.' + unveilString);
-            images = images.not(batch);
+                batch.trigger(unveilString + unveilNamespace);
+                containerContext.images = containerContext.images.not(batch);
 
-            if (batch.length) {
-                if (settings.debug) console.log('New images in view', batch.length, ', leaves', images.length, 'in collection');
+                if (batch.length) {
+                    if (settings.debug) console.log('New images in view', batch.length, ', leaves', containerContext.length, 'in collection');
+                }
             }
+        }
+
+        function destroyContainer() {
+            settings.container.off(unveilNamespace);
+            containerContext.images.off(unveilNamespace);
+            settings.container.data(unveilString, null);
+            containerContext.initialized = false;
+            containerContext.images = null;
         }
 
         /**
@@ -280,7 +322,7 @@
                 elmPlaceholder = $this.data(srcString + '-' + placeholderString) || settings.placeholder;
 
             // Add element to global array
-            images = $(images).add(this);
+            containerContext.images = $(containerContext.images).add(this);
 
             // If this element has been called before,
             // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
@@ -296,7 +338,7 @@
 
                 // Set placeholder
                 $this
-                    .one('load', function () {
+                    .one('load' + unveilNamespace, function () {
                         var $this = $(this);
 
                         if ($this.hasClass(unveilString + '-loaded')) {
@@ -311,18 +353,18 @@
             }
         });
 
-        if (settings.debug) console.log('Images now in collection', images.length);
+        if (settings.debug) console.log('Images now in collection', containerContext.images.length);
 
         /**
          * Bind global listeners
          */
-        {if (!initialized) {
-            settings.container.on({
-                'resize.unveil': throttle(resize),
-                'scroll.unveil': throttle(lookup),
-                'lookup.unveil': lookup
-            });
-            initialized = true;
+        {if (!containerContext.initialized) {
+            settings.container
+                .on('resize' + unveilNamespace, throttle(resize))
+                .on('scroll' + unveilNamespace, throttle(lookup))
+                .on('lookup' + unveilNamespace, lookup)
+                .on('destroy' + unveilNamespace, destroyContainer);
+            containerContext.initialized = true;
         }}
 
         /**
