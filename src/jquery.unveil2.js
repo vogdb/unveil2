@@ -152,7 +152,7 @@
                 $this.trigger('loading' + unveilNamespace);
 
                 // When new source has loaded, do stuff
-                $this.one('load', function () {
+                $this.one('load' + unveilNamespace, function () {
 
                     // Change classes
                     classLoaded($this);
@@ -173,9 +173,9 @@
                 if (this.nodeName === 'IMG') {
                     $this.prop(srcString, targetSrc);
                 } else {
-                    $('<img/>').attr(srcString, targetSrc).one('load', function() {
+                    $('<img/>').attr(srcString, targetSrc).one('load' + unveilNamespace, function() {
                         $(this).remove();
-                        $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load');
+                        $this.css('backgroundImage', 'url(' + targetSrc + ')').trigger('load' + unveilNamespace);
                     });
                 }
 
@@ -338,7 +338,7 @@
 
                 // Set placeholder
                 $this
-                    .one('load', function () {
+                    .one('load' + unveilNamespace, function () {
                         var $this = $(this);
 
                         if ($this.hasClass(unveilString + '-loaded')) {
