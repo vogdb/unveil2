@@ -70,6 +70,12 @@
                         <td>Custom data attribute for image source</td>
                     </tr>
                     <tr>
+                        <th scope="row">container</th>
+                        <td>jQuery object</td>
+                        <td>$(window)</td>
+                        <td>Scrolling container</td>
+                    </tr>
+                    <tr>
                         <th scope="row">breakpoints</th>
                         <td>array</td>
                         <td>[]</td>
@@ -152,7 +158,10 @@ $('img.lazy').trigger('unveil');</code></pre>
                 You can remove all of unveils functionality by removing all event handlers:
             </p>
             <pre><code class="js">// example
-$(window).add('img.lazy').off('.unveil');</code></pre>
+$('img.lazy').trigger('destroy.unveil');
+//or
+$('.unveilContainer').trigger('destroy.unveil');
+            </code></pre>
 
         </article>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>

@@ -174,7 +174,8 @@ module.exports = function (grunt) {
                 test: function () {
                     return (/^v5/).test(process.version);
                 },
-                tasks: ['saucelabs-qunit']
+                // tasks: ['saucelabs-qunit']
+                tasks: []
             }
         }
 
