@@ -321,12 +321,12 @@
             var $this = $(this),
                 elmPlaceholder = $this.data(srcString + '-' + placeholderString) || settings.placeholder;
 
-            // Add element to global array
-            containerContext.images = $(containerContext.images).add(this);
-
             // If this element has been called before,
             // don't set placeholder now to prevent FOUI (Flash Of Ustyled Image)
             if (!$this.data(unveilString)) {
+
+                // Add element to global array
+                containerContext.images = $(containerContext.images).add(this);
 
                 // Set the unveil flag
                 $this.data(unveilString, true);
