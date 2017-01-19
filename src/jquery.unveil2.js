@@ -187,7 +187,7 @@
         });
 
         this.one('destroy' + unveilNamespace, function () {
-            $(this).off(unveilNamespace);
+            $(this).off(unveilNamespace).removeData(unveilString);
             if (containerContext.images) {
                 containerContext.images = containerContext.images.not(this);
                 if (!containerContext.images.length) {
@@ -302,9 +302,8 @@
         }
 
         function destroyContainer() {
-            settings.container.off(unveilNamespace);
-            containerContext.images.off(unveilNamespace);
-            settings.container.data(unveilString, null);
+            settings.container.off(unveilNamespace).removeData(unveilString);
+            containerContext.images.off(unveilNamespace).removeData(unveilString);
             containerContext.initialized = false;
             containerContext.images = null;
         }
